@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'theme/app_theme.dart';
-import 'features/on_boarding/presentation/on_boarding_screen.dart';
+import 'core/theme/app_theme/app_theme.dart';
+import 'routes/app_router.dart';
 
 void main() {
   runApp(const MyApp());
@@ -11,11 +11,11 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
+    return MaterialApp.router(
       debugShowCheckedModeBanner: false,
       title: "Flutter Theme App",
       theme: AppTheme.lightTheme,
-      home: OnBoardingScreen(),
+      routerConfig: appRouter,
     );
   }
 }

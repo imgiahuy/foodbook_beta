@@ -1,84 +1,92 @@
 import 'package:flutter/material.dart';
+import 'package:foodbook_beta/core/app_assets/app_texts.dart';
+import 'package:foodbook_beta/core/app_assets/image_assets.dart';
+import 'package:foodbook_beta/core/theme/app_theme/app_theme.dart';
+import 'package:foodbook_beta/core/theme/app_theme/text_theme.dart';
+import 'package:foodbook_beta/core/theme/colors/colors_digital.dart';
+import 'package:go_router/go_router.dart';
 
 class OnBoardingScreen extends StatelessWidget {
   const OnBoardingScreen({super.key});
 
   @override
   Widget build(BuildContext context) {
+    final screenWidth = MediaQuery.of(context).size.width;
+    final screenHeight = MediaQuery.of(context).size.height;
+
     return MaterialApp(
       debugShowCheckedModeBanner: false,
-      theme: ThemeData(
-        //colorScheme define later, with this get started we only use once
-        colorScheme: ColorScheme.fromSeed(seedColor: Colors.teal),
-        brightness: Brightness.light,
-      ),
+      theme: AppTheme.lightTheme,
       home: Scaffold(
-        backgroundColor: Color.fromRGBO(247, 217, 21, 1),
-        //!Maybe should wrap with a SafeArea
+        backgroundColor: yellow,
         body: SafeArea(
           top: false,
           bottom: false,
           child: Stack(
             children: [
               Positioned(
+                right: screenWidth * 0.15,
+                top: screenHeight * 0.1,
+                child: Container(
+                  decoration: BoxDecoration(
+                    shape: BoxShape.circle,
+                    color: white,
+                  ),
+                  height: screenWidth * 0.25,
+                  width: screenWidth * 0.25,
+                  child: Center(
+                    child: Image.asset(AppAssets.logo, fit: BoxFit.contain),
+                  ),
+                ),
+              ),
+              Positioned(
                 child: Center(
                   child: Image.asset(
-                    'assets/images/food_plate.png',
+                    AppAssets.foodplate_1,
                     fit: BoxFit.cover,
-                    height: 420,
+                    height: screenWidth * 0.9,
                   ),
                 ),
               ),
               Positioned(
-                top: 20,
-                left: 0,
+                top: screenHeight * 0.009,
+                left: screenWidth * 0,
                 child: Container(
                   padding: EdgeInsets.all(15),
-                  height: 300,
-                  width: 250,
+                  height: screenWidth * 0.7,
+                  width: screenWidth * 0.7,
                   child: Center(
                     child: Text(
-                      "What eat today ?",
-                      style: TextStyle(
-                        fontSize: 70,
-                        height: 0.9,
-                        fontFamily: "Poppins",
-                        fontWeight: FontWeight.w600,
-                        color: Color.fromARGB(255, 250, 74, 12),
-                      ),
+                      AppTexts.whatEatToday,
+                      style: AppTextTheme.textTheme.displayLarge,
                     ),
                   ),
                 ),
               ),
               Positioned(
-                right: -5,
-                bottom: -110,
+                right: screenWidth * -0.015,
+                bottom: screenHeight * -0.12,
                 child: SizedBox(
                   child: Image.asset(
-                    'assets/images/get_started_thinking_freebg.png',
-                    height: 700,
-                    width: 300,
+                    AppAssets.menThinking,
+                    height: screenHeight * 0.75,
+                    width: screenWidth * 0.75,
                     fit: BoxFit.cover,
                   ),
                 ),
               ),
               Positioned(
-                left: 50,
-                right: 50,
-                bottom: 50,
+                left: screenWidth * 0.12,
+                right: screenWidth * 0.12,
+                bottom: screenHeight * 0.05,
                 child: SizedBox(
-                  height: 70,
+                  height: screenWidth * 0.15,
                   child: ElevatedButton(
-                    onPressed: () {},
-                    child: Text(
-                      "Get started",
-                      style: TextStyle(
-                        fontFamily: "Poppins",
-                        fontSize: 25,
-                        fontWeight: FontWeight.w600,
-                        color: Color.fromARGB(255, 250, 74, 12),
-                      ),
-                    ),
+                    style: ElevatedButton.styleFrom(backgroundColor: black),
+                    onPressed: () {
+                      context.goNamed('welcome');
+                    },
+                    child: Text(AppTexts.getStarted),
                   ),
                 ),
               ),
