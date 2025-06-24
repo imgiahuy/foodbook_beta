@@ -1,16 +1,32 @@
-import 'package:foodbook_beta/features/auth/presentation/login_pages.dart';
-import 'package:foodbook_beta/features/auth/presentation/register_pages.dart';
+// on_boarding_router.dart
+import 'package:foodbook_beta/features/auth/presentation/pages/login_pages.dart';
+import 'package:foodbook_beta/features/auth/presentation/pages/register_pages.dart';
 import 'package:go_router/go_router.dart';
+import 'package:foodbook_beta/features/on_boarding/presentation/on_boarding_screen.dart';
+import 'package:foodbook_beta/features/auth/presentation/pages/welcome_pages.dart';
 
-final List<GoRoute> authRoutes = [
+final List<GoRoute> authRouter = [
   GoRoute(
-    path: 'welcome/signin',
-    name: 'signin',
-    builder: (context, state) => LoginPages(),
-  ),
-  GoRoute(
-    path: 'welcome/signup',
-    name: 'signup',
-    builder: (context, state) => RegisterPages(),
+    path: '/',
+    builder: (context, state) => const OnBoardingScreen(),
+    routes: [
+      GoRoute(
+        path: 'welcome',
+        name: 'welcome',
+        builder: (context, state) => WelcomePages(),
+        routes: [
+          GoRoute(
+            path: 'signin',
+            name: 'signin',
+            builder: (context, state) => LoginPages(),
+          ),
+          GoRoute(
+            path: 'signup',
+            name: 'signup',
+            builder: (context, state) => RegisterPages(),
+          ),
+        ],
+      ),
+    ],
   ),
 ];

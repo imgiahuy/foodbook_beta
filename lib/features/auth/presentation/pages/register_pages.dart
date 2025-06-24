@@ -1,19 +1,44 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:foodbook_beta/core/app_assets/app_texts.dart';
 import 'package:foodbook_beta/core/app_assets/image_assets.dart';
 import 'package:foodbook_beta/core/theme/app_theme/app_const.dart';
 import 'package:foodbook_beta/core/theme/app_theme/app_theme.dart';
 import 'package:foodbook_beta/core/theme/app_theme/text_theme.dart';
 import 'package:foodbook_beta/core/theme/colors/colors_digital.dart';
+import 'package:foodbook_beta/features/auth/domain/entities/user.dart';
+import 'package:foodbook_beta/features/auth/logic/auth_provider.dart';
 import 'package:go_router/go_router.dart';
 
-//!Later will change and add feature to change the avatar of known users. (Stateful Widget)
+class RegisterPages extends ConsumerWidget {
+  RegisterPages({super.key});
 
-class LoginPages extends StatelessWidget {
-  const LoginPages({super.key});
+  final emailController = TextEditingController();
+  final passwordCotroller = TextEditingController();
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
+    final authState = ref.watch(authNotifierProvider);
+    final isChecked = ref.watch(termsAcceptedProvider);
+
+    ref.listen<AsyncValue<User?>>(authNotifierProvider, (previous, next) {
+      next.whenOrNull(
+        data: (user) {
+          if (user != null) {
+            // Navigate to home page on successful sign-in
+            context.goNamed(
+              'signin',
+            ); // or pushReplacementNamed if using Navigator
+          }
+        },
+        error: (error, stackTrace) {
+          ScaffoldMessenger.of(
+            context,
+          ).showSnackBar(SnackBar(content: Text("Sign up failed")));
+        },
+      );
+    });
+
     final screenWidth = MediaQuery.of(context).size.width;
     return MaterialApp(
       debugShowCheckedModeBanner: false,
@@ -34,7 +59,7 @@ class LoginPages extends StatelessWidget {
             Container(
               margin: EdgeInsets.only(right: AppSizes.spacing),
               child: Text(
-                AppTexts.signUp,
+                AppTexts.signIn,
                 style: AppTextTheme.textTheme.headlineSmall,
               ),
             ),
@@ -43,7 +68,7 @@ class LoginPages extends StatelessWidget {
         body: Column(
           children: [
             Container(
-              height: screenWidth * 0.4,
+              height: screenWidth * 0.3,
               width: double.infinity,
               padding: EdgeInsets.fromLTRB(AppSizes.spacing, 0, 0, 0),
               decoration: BoxDecoration(
@@ -57,14 +82,15 @@ class LoginPages extends StatelessWidget {
                 children: [
                   SizedBox(height: AppSizes.spacing),
                   Text(
-                    AppTexts.signIn,
+                    AppTexts.signUp,
                     style: AppTextTheme.textTheme.headlineLarge,
                   ),
-                  SizedBox(height: AppSizes.spacing),
-                  Text(
-                    AppTexts.signUpEncourage,
-                    textAlign: TextAlign.left,
-                    style: AppTextTheme.textTheme.bodyMedium,
+                  Padding(
+                    padding: EdgeInsetsGeometry.all(AppSizes.smallSpacing),
+                    child: Text(
+                      AppTexts.decorText1,
+                      style: AppTextTheme.textTheme.bodyMedium,
+                    ),
                   ),
                 ],
               ),
@@ -80,7 +106,8 @@ class LoginPages extends StatelessWidget {
                   //padding: EdgeInsets.all(10),
                   child: Column(
                     children: [
-                      SizedBox(height: AppSizes.largeSpacing),
+                      SizedBox(height: AppSizes.spacing),
+                      //! feature to let people choose their avatar.
                       Container(
                         decoration: BoxDecoration(
                           shape: BoxShape.circle,
@@ -95,7 +122,7 @@ class LoginPages extends StatelessWidget {
                           ),
                         ),
                       ),
-                      SizedBox(height: AppSizes.largeSpacing),
+                      SizedBox(height: AppSizes.mediumSpacing),
                       SizedBox(
                         height: screenWidth * 1.1,
                         width: double.infinity,
@@ -104,6 +131,7 @@ class LoginPages extends StatelessWidget {
                             SizedBox(
                               width: AppSizes.textFormFieldSize,
                               child: TextFormField(
+                                controller: emailController,
                                 decoration: InputDecoration(
                                   filled: true,
                                   fillColor: white,
@@ -113,15 +141,16 @@ class LoginPages extends StatelessWidget {
                                     ),
                                     borderSide: BorderSide.none,
                                   ),
-                                  hintText: 'Email addresse',
+                                  hintText: 'Email adresse',
                                 ),
                                 keyboardType: TextInputType.emailAddress,
                               ),
                             ),
-                            SizedBox(height: AppSizes.mediumSpacing),
+                            SizedBox(height: AppSizes.spacing),
                             SizedBox(
                               width: AppSizes.textFormFieldSize,
                               child: TextFormField(
+                                controller: passwordCotroller,
                                 obscureText: true,
                                 decoration: InputDecoration(
                                   filled: true,
@@ -137,29 +166,43 @@ class LoginPages extends StatelessWidget {
                                 keyboardType: TextInputType.emailAddress,
                               ),
                             ),
-                            SizedBox(height: AppSizes.smallSpacing),
-                            Container(
-                              width: double.infinity,
-                              padding: EdgeInsets.fromLTRB(
-                                AppSizes.largePadding,
-                                0,
-                                0,
-                                0,
-                              ),
-                              child: TextButton(
-                                onPressed: () {},
-                                /*style: ButtonStyle(
-                                  overlayColor: WidgetStateProperty.all(
-                                    Colors.transparent,
-                                  ),
-                                ),*/
-                                child: Text(
-                                  'Forgot password ?',
-                                  style: AppTextTheme.textTheme.labelSmall,
+                            SizedBox(height: AppSizes.spacing),
+                            SizedBox(
+                              child: Padding(
+                                padding: const EdgeInsets.all(
+                                  AppSizes.mediumSpacing,
+                                ),
+                                child: Row(
+                                  mainAxisSize: MainAxisSize.min,
+                                  children: [
+                                    IconButton(
+                                      icon: Icon(
+                                        isChecked
+                                            ? Icons.check_box
+                                            : Icons.check_box_outline_blank,
+                                      ),
+                                      onPressed: () {
+                                        ref
+                                                .read(
+                                                  termsAcceptedProvider
+                                                      .notifier,
+                                                )
+                                                .state =
+                                            !isChecked;
+                                      },
+                                    ),
+                                    Expanded(
+                                      child: Text(
+                                        AppTexts.termNoti,
+                                        style:
+                                            AppTextTheme.textTheme.bodyMedium,
+                                      ),
+                                    ),
+                                  ],
                                 ),
                               ),
                             ),
-                            SizedBox(height: AppSizes.smallSpacing),
+                            SizedBox(height: AppSizes.spacing),
                             SizedBox(
                               height: AppSizes.buttonHeight,
                               width: AppSizes.buttonWidthLarge,
@@ -171,8 +214,20 @@ class LoginPages extends StatelessWidget {
                                     ),
                                   ),
                                 ),
-                                onPressed: () {},
-                                child: Text(AppTexts.signIn),
+                                onPressed: isChecked && !authState.isLoading
+                                    ? () {
+                                        final email = emailController.text
+                                            .trim();
+                                        final password = passwordCotroller.text
+                                            .trim();
+                                        ref
+                                            .read(authNotifierProvider.notifier)
+                                            .signUp(email, password);
+                                      }
+                                    : null,
+                                child: authState.isLoading
+                                    ? CircularProgressIndicator(color: white)
+                                    : Text(AppTexts.signUp),
                               ),
                             ),
                             SizedBox(height: AppSizes.spacing),
@@ -213,7 +268,8 @@ class LoginPages extends StatelessWidget {
                                     child: Image.asset(
                                       AppAssets.metaIcon,
                                       fit: BoxFit.contain,
-                                      height: 30,
+                                      height:
+                                          30, //!really specific because the meta logo is bigger than others here
                                     ),
                                   ),
                                 ),
