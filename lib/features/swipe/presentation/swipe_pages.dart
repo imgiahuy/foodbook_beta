@@ -1,9 +1,11 @@
+import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:foodbook_beta/features/home/data/model/post_model.dart';
 import 'package:foodbook_beta/features/home/logic/hive_service_provider.dart';
 import 'package:foodbook_beta/features/home/logic/post_content_provider.dart';
 import 'package:swipe_cards/swipe_cards.dart';
+import 'package:video_player/video_player.dart';
 
 class SwipePage extends ConsumerStatefulWidget {
   const SwipePage({super.key});
@@ -15,11 +17,19 @@ class SwipePage extends ConsumerStatefulWidget {
 class _SwipePageState extends ConsumerState<SwipePage> {
   late MatchEngine _matchEngine;
   List<SwipeItem> _swipeItems = [];
+  VideoPlayerController? _videoController;
+
+  @override
+  void dispose() {
+    _videoController?.dispose();
+    super.dispose();
+  }
 
   void _buildSwipeItems(List<PostContent> posts) {
     _swipeItems = posts.asMap().entries.map((entry) {
       final index = entry.key;
       final post = entry.value;
+
       return SwipeItem(
         content: post,
         likeAction: () async {
@@ -27,7 +37,6 @@ class _SwipePageState extends ConsumerState<SwipePage> {
             final hiveService = ref.read(hiveServiceProvider);
             final path = post.image!.path;
             await hiveService.set<String>('recipes', path, post.recipe!);
-            // ignore: use_build_context_synchronously
             ScaffoldMessenger.of(context).showSnackBar(
               const SnackBar(content: Text('Recipe saved locally!')),
             );
@@ -49,6 +58,19 @@ class _SwipePageState extends ConsumerState<SwipePage> {
       _buildSwipeItems(updatedPosts);
       _matchEngine = MatchEngine(swipeItems: _swipeItems);
     });
+  }
+
+  Future<void> _initializeVideo(File file) async {
+    if (_videoController != null) {
+      await _videoController!.pause();
+      await _videoController!.dispose();
+    }
+
+    _videoController = VideoPlayerController.file(file)
+      ..setLooping(true)
+      ..setVolume(1.0);
+    await _videoController!.initialize();
+    await _videoController!.play();
   }
 
   @override
@@ -104,9 +126,35 @@ class _SwipePageState extends ConsumerState<SwipePage> {
                             ),
                           )
                         else if (post.video != null)
-                          const Icon(Icons.videocam, size: 100),
+                          FutureBuilder(
+                            future: _initializeVideo(post.video!),
+                            builder: (context, snapshot) {
+                              if (snapshot.connectionState ==
+                                      ConnectionState.done &&
+                                  _videoController != null &&
+                                  _videoController!.value.isInitialized) {
+                                return ClipRRect(
+                                  borderRadius: BorderRadius.circular(20),
+                                  child: AspectRatio(
+                                    aspectRatio:
+                                        _videoController!.value.aspectRatio,
+                                    child: VideoPlayer(_videoController!),
+                                  ),
+                                );
+                              } else {
+                                return const Padding(
+                                  padding: EdgeInsets.all(20),
+                                  child: CircularProgressIndicator(),
+                                );
+                              }
+                            },
+                          )
+                        else
+                          const Padding(
+                            padding: EdgeInsets.all(16),
+                            child: Text('No media available'),
+                          ),
                         const SizedBox(height: 16),
-                        // Recipe text removed from card as requested
                       ],
                     ),
                   ),

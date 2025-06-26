@@ -27,10 +27,7 @@ class LoginPages extends ConsumerWidget {
       next.whenOrNull(
         data: (user) {
           if (user != null) {
-            // Navigate to home page on successful sign-in
-            context.goNamed(
-              'home',
-            ); // or pushReplacementNamed if using Navigator
+            context.goNamed('home');
           }
         },
         error: (error, stackTrace) {
@@ -101,7 +98,6 @@ class LoginPages extends ConsumerWidget {
                 borderRadius: BorderRadius.circular(AppSizes.cornerRadius),
               ),
               child: SingleChildScrollView(
-                //padding: EdgeInsets.all(10),
                 child: Column(
                   children: [
                     SizedBox(height: AppSizes.largeSpacing),
@@ -167,11 +163,7 @@ class LoginPages extends ConsumerWidget {
                             ),
                             child: TextButton(
                               onPressed: () {},
-                              /*style: ButtonStyle(
-                                  overlayColor: WidgetStateProperty.all(
-                                    Colors.transparent,
-                                  ),
-                                ),*/
+
                               child: Text(
                                 'Forgot password ?',
                                 style: AppTextTheme.textTheme.labelSmall,
