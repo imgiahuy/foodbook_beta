@@ -14,4 +14,5 @@ class AppSizes {
   static const double esclipeDecor = 200;
   static const double textFormFieldSize = 350;
   static const double roundedButton = 50;
+  static const double smallPadding = 25;
 }

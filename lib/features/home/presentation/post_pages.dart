@@ -2,6 +2,7 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:foodbook_beta/core/theme/app_theme/app_const.dart';
+import 'package:foodbook_beta/core/theme/app_theme/text_theme.dart';
 import 'package:foodbook_beta/core/theme/colors/colors_digital.dart';
 import 'package:foodbook_beta/features/home/logic/images_provider.dart';
 import 'package:foodbook_beta/features/home/logic/video_provider.dart';
@@ -30,7 +31,6 @@ class _PostPagesState extends ConsumerState<PostPages> {
   Future<void> _initializeVideo(File videoFile) async {
     debugPrint("Initializing video: ${videoFile.path}");
 
-    // Dispose previous controller if exists
     await _videoController?.dispose();
     _videoController = VideoPlayerController.file(videoFile);
 
@@ -46,12 +46,81 @@ class _PostPagesState extends ConsumerState<PostPages> {
     }
   }
 
+  Future<void> _showRecipeDialog(File? image, File? video) async {
+    final TextEditingController recipeController = TextEditingController();
+
+    final recipe = await showDialog<String>(
+      context: context,
+      builder: (context) => Dialog(
+        insetPadding: EdgeInsets.zero, // Removes padding to allow full-screen
+        child: SizedBox.expand(
+          child: Scaffold(
+            appBar: AppBar(
+              title: const Text('Recipe'),
+              actions: [
+                TextButton(
+                  onPressed: () {
+                    if (recipeController.text.trim().isEmpty) return;
+                    Navigator.of(context).pop(recipeController.text.trim());
+                  },
+                  child: Text(
+                    'Save',
+                    style: AppTextTheme.textTheme.labelMedium,
+                  ),
+                ),
+              ],
+            ),
+            body: Padding(
+              padding: const EdgeInsets.all(16.0),
+              child: SingleChildScrollView(
+                child: ConstrainedBox(
+                  constraints: BoxConstraints(
+                    minHeight: MediaQuery.of(context).size.height - 150,
+                  ),
+                  child: TextField(
+                    controller: recipeController,
+                    decoration: const InputDecoration(
+                      hintText: 'Write your recipe here...',
+                    ),
+                    keyboardType: TextInputType.multiline,
+                    maxLines: null,
+                    textAlignVertical: TextAlignVertical.top,
+                    expands: false,
+                  ),
+                ),
+              ),
+            ),
+          ),
+        ),
+      ),
+    );
+
+    if (recipe != null) {
+      if (image != null) {
+        ref.read(postContentProvider.notifier).addImage(image, recipe: recipe);
+      } else if (video != null) {
+        ref.read(postContentProvider.notifier).addVideo(video, recipe: recipe);
+      }
+
+      ref.read(imagesProvider.notifier).clearImage();
+      ref.read(videosProvider.notifier).clearVideo();
+
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Post successful with recipe!')),
+      );
+
+      Navigator.pushReplacement(
+        context,
+        MaterialPageRoute(builder: (_) => const HomePages()),
+      );
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     final imageFile = ref.watch(imagesProvider);
     final videoFile = ref.watch(videosProvider);
 
-    // Initialize video if it's new
     if (videoFile != null && videoFile.path != _currentVideoPath) {
       _initializeVideo(videoFile);
     }
@@ -76,13 +145,8 @@ class _PostPagesState extends ConsumerState<PostPages> {
         child: Image.file(imageFile, fit: BoxFit.cover),
       );
     } else {
-      displayContent = const Icon(
-        Icons.camera_alt,
-        size: 50,
-        color: Colors.white,
-      );
+      displayContent = Icon(Icons.camera_alt, size: 50, color: white);
     }
-
     return Scaffold(
       appBar: AppBar(
         leading: IconButton(
@@ -90,47 +154,31 @@ class _PostPagesState extends ConsumerState<PostPages> {
             final image = ref.read(imagesProvider);
             final video = ref.read(videosProvider);
 
-            if (image != null) {
-              ref.read(postContentProvider.notifier).setImage(image);
-            } else if (video != null) {
-              ref.read(postContentProvider.notifier).setVideo(video);
-            }
-
-            ref.read(imagesProvider.notifier).clearImage();
-            ref.read(videosProvider.notifier).clearVideo();
-
-            ScaffoldMessenger.of(
-              context,
-            ).showSnackBar(const SnackBar(content: Text('Post successful!')));
-
-            WidgetsBinding.instance.addPostFrameCallback((_) {
-              Navigator.pushReplacement(
-                context,
-                MaterialPageRoute(builder: (_) => const HomePages()),
+            if (image != null || video != null) {
+              _showRecipeDialog(image, video);
+            } else {
+              ScaffoldMessenger.of(context).showSnackBar(
+                const SnackBar(
+                  content: Text('Please select an image or video first'),
+                ),
               );
-            });
+            }
           },
           icon: const Icon(Icons.done),
         ),
         actions: [
           IconButton(
             onPressed: () {
-              // Clear selected image and video
               ref.read(imagesProvider.notifier).clearImage();
               ref.read(videosProvider.notifier).clearVideo();
-
-              // Dispose video controller if any
               _videoController?.dispose();
               _videoController = null;
               _currentVideoPath = null;
-
-              // Update UI
               setState(() {});
 
-              // Optional: show snackbar to confirm reset
               ScaffoldMessenger.of(
                 context,
-              ).showSnackBar(SnackBar(content: Text('Post reset')));
+              ).showSnackBar(const SnackBar(content: Text('Post reset')));
             },
             icon: const Icon(Icons.cancel_outlined),
           ),
@@ -208,7 +256,6 @@ class _PostPagesState extends ConsumerState<PostPages> {
                           final file = File(pickedVideo.path);
                           ref.read(videosProvider.notifier).setVideo(file);
                           ref.read(imagesProvider.notifier).clearImage();
-                          // Initialization handled in build
                         }
                       },
                       child: const Text('Post Video'),

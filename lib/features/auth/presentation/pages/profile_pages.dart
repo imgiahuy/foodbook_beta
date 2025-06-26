@@ -122,7 +122,9 @@ class ProfilePages extends ConsumerWidget {
                           height: AppSizes.buttonHeight,
                           width: AppSizes.buttonWidthLarge,
                           child: ElevatedButton(
-                            onPressed: () {},
+                            onPressed: () {
+                              context.goNamed('save');
+                            },
                             child: Row(
                               children: [
                                 Expanded(child: Text('Saved')),

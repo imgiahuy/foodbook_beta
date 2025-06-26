@@ -5,17 +5,17 @@ import 'package:foodbook_beta/core/theme/app_theme/text_theme.dart';
 import 'package:foodbook_beta/core/theme/colors/colors_digital.dart';
 import 'package:foodbook_beta/features/home/data/model/post_model.dart';
 import 'package:foodbook_beta/features/home/logic/hive_service_provider.dart';
-import 'package:foodbook_beta/features/home/logic/post_content_provider.dart';
+import 'package:foodbook_beta/features/like/logic/liked_post_provider.dart';
 import 'package:video_player/video_player.dart';
 
-class HomePages extends ConsumerStatefulWidget {
-  const HomePages({super.key});
+class LikedPage extends ConsumerStatefulWidget {
+  const LikedPage({super.key});
 
   @override
-  ConsumerState<HomePages> createState() => _HomePagesState();
+  ConsumerState<LikedPage> createState() => _LikedPageState();
 }
 
-class _HomePagesState extends ConsumerState<HomePages> {
+class _LikedPageState extends ConsumerState<LikedPage> {
   final Map<int, VideoPlayerController> _videoControllers = {};
 
   @override
@@ -61,9 +61,6 @@ class _HomePagesState extends ConsumerState<HomePages> {
       content = const SizedBox();
     }
 
-    bool liked = post.liked;
-    int likeCount = liked ? 1 : 0;
-
     return Center(
       child: ConstrainedBox(
         constraints: const BoxConstraints(maxWidth: 500),
@@ -74,7 +71,7 @@ class _HomePagesState extends ConsumerState<HomePages> {
             borderRadius: BorderRadius.circular(AppSizes.cornerRadius),
             boxShadow: [
               BoxShadow(
-                color: Colors.black.withValues(alpha: 0.1),
+                color: Colors.black.withAlpha(25),
                 blurRadius: 8,
                 offset: const Offset(0, 4),
               ),
@@ -95,18 +92,20 @@ class _HomePagesState extends ConsumerState<HomePages> {
                         children: [
                           IconButton(
                             icon: Icon(
-                              liked ? Icons.favorite : Icons.favorite_border,
-                              color: liked ? orange : null,
+                              post.liked
+                                  ? Icons.favorite
+                                  : Icons.favorite_border,
+                              color: post.liked ? orange : null,
                             ),
                             onPressed: () {
                               setLikeState(() {
-                                liked = !liked;
-                                post.liked = liked;
-                                likeCount = liked ? 1 : 0;
+                                setState(() {
+                                  post.liked = !post.liked;
+                                });
                               });
                             },
                           ),
-                          Text('$likeCount'),
+                          Text(post.liked ? '1' : '0'),
                         ],
                       );
                     },
@@ -124,8 +123,8 @@ class _HomePagesState extends ConsumerState<HomePages> {
                               ),
                             ),
                             child: SizedBox(
-                              width: 400, // customize width here
-                              height: 600, // customize height here
+                              width: 400,
+                              height: 600,
                               child: Padding(
                                 padding: const EdgeInsets.all(AppSizes.spacing),
                                 child: Column(
@@ -155,16 +154,16 @@ class _HomePagesState extends ConsumerState<HomePages> {
                                             final hiveService = ref.read(
                                               hiveServiceProvider,
                                             );
-                                            final path = post.image!.path;
+                                            final path =
+                                                post.image?.path ??
+                                                post.video!.path;
                                             await hiveService.set<String>(
                                               'recipes',
                                               path,
                                               post.recipe!,
                                             );
-                                            // ignore: use_build_context_synchronously
                                             Navigator.of(dialogContext).pop();
                                             ScaffoldMessenger.of(
-                                              // ignore: use_build_context_synchronously
                                               context,
                                             ).showSnackBar(
                                               const SnackBar(
@@ -184,7 +183,6 @@ class _HomePagesState extends ConsumerState<HomePages> {
                             ),
                           ),
                         );
-                        ;
                       },
                       child: const Text('Recipe'),
                     ),
@@ -199,19 +197,17 @@ class _HomePagesState extends ConsumerState<HomePages> {
 
   @override
   Widget build(BuildContext context) {
-    final posts = ref.watch(postContentProvider);
+    final likedPosts = ref.watch(likedPostsProvider);
 
     return Scaffold(
-      appBar: AppBar(
-        title: Text('FOODBOOK', style: TextStyle(color: orange)),
-      ),
-      body: posts.isEmpty
-          ? const Center(child: Text('No posts yet'))
+      appBar: AppBar(title: const Text('Liked Posts')),
+      body: likedPosts.isEmpty
+          ? const Center(child: Text('No liked posts yet'))
           : ListView.builder(
               padding: const EdgeInsets.all(AppSizes.spacing),
-              itemCount: posts.length,
+              itemCount: likedPosts.length,
               itemBuilder: (context, index) {
-                final post = posts[index];
+                final post = likedPosts[index];
                 return _buildPost(post, index);
               },
             ),

@@ -1,0 +1,7 @@
+// lib/providers/hive_service_provider.dart
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:foodbook_beta/core/service/hive_service.dart';
+
+final hiveServiceProvider = Provider<HiveService>((ref) {
+  return HiveService();
+});
