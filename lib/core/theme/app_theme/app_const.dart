@@ -7,6 +7,7 @@ class AppSizes {
   static const double largePadding = 180;
   static const double spacing = 15;
   static const double mediumSpacing = 30;
+  static const double mediumPadding = 70;
   static const double smallSpacing = 5;
   static const double largeSpacing = 50;
   static const double cornerRadius = 30;

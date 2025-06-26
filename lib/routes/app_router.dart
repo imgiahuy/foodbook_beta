@@ -1,5 +1,5 @@
 import 'package:foodbook_beta/routes/auth_router.dart';
-import 'package:foodbook_beta/routes/home_route.dart';
+import 'package:foodbook_beta/routes/shell_router.dart';
 import 'package:go_router/go_router.dart';
 
-final GoRouter appRouter = GoRouter(routes: [...authRouter, ...homeRoutes]);
+final GoRouter appRouter = GoRouter(routes: [...authRouter, ...shellRoutes]);

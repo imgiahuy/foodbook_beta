@@ -21,12 +21,12 @@ class AuthRepoFirebaseImpl extends AuthRepository {
 
   @override
   Future<void> signOut() async {
-    datasource.signOut();
+    await datasource.signOut();
   }
 
   @override
-  Future<User?> signUp(String email, String password) async {
-    final userModel = await datasource.signUp(email, password);
+  Future<User?> signUp(String email, String password, String username) async {
+    final userModel = await datasource.signUp(email, password, username);
     return userModel?.toEntity();
   }
 }

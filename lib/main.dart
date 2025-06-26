@@ -5,9 +5,9 @@ import 'core/theme/app_theme/app_theme.dart';
 import 'routes/app_router.dart';
 
 void main() async {
-  WidgetsFlutterBinding.ensureInitialized(); // Make sure binding is ready
+  WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp();
-  // Initialize Firebase
+
   runApp(const ProviderScope(child: MyApp()));
 }
 
@@ -18,7 +18,7 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp.router(
       debugShowCheckedModeBanner: false,
-      title: "Flutter Theme App",
+      title: "Foodbook",
       theme: AppTheme.lightTheme,
       routerConfig: appRouter,
     );

@@ -1,8 +1,11 @@
+import 'dart:io';
+
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:foodbook_beta/features/auth/data/datasources/firebase_auth_datasource.dart';
 import 'package:foodbook_beta/features/auth/data/repositories/auth_repo_firebase_impl.dart';
 import 'package:foodbook_beta/features/auth/domain/entities/user.dart';
 import 'package:foodbook_beta/features/auth/domain/repositories/auth_repository.dart';
+import 'package:foodbook_beta/features/auth/domain/usecases/get_current_user_usecase.dart';
 import 'package:foodbook_beta/features/auth/domain/usecases/sign_in_usecase.dart';
 import 'auth_notifier.dart';
 import 'package:foodbook_beta/features/auth/domain/usecases/sign_out_usecase.dart';
@@ -29,12 +32,17 @@ final signOutUseCaseProvider = Provider<SignOutUsecase>((ref) {
   return SignOutUsecase(ref.read(authRepositoryProvider));
 });
 
+final getCurrentUserUseCaseProvider = Provider<GetCurrentUserUsecase>((ref) {
+  return GetCurrentUserUsecase(ref.read(authRepositoryProvider));
+});
+
 final authNotifierProvider =
     StateNotifierProvider<AuthNotifier, AsyncValue<User?>>((ref) {
       return AuthNotifier(
         signInUseCase: ref.read(signInUseCaseProvider),
         signUpUseCase: ref.read(signUpUseCaseProvider),
         signOutUseCase: ref.read(signOutUseCaseProvider),
+        getCurrentUserUseCase: ref.read(getCurrentUserUseCaseProvider),
       );
     });
 
