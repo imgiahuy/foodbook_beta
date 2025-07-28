@@ -1,16 +1,48 @@
-# foodbook_beta
+foodbook_beta
+Kudos to the Developer!
 
-A new Flutter project.
+This app was created and developed as part of the Mobile Anwendungen course at HTWG Konstanz during the Summer Semester 2025.
 
-## Getting Started
+⚠️ Disclaimer
+This app is still in development and not yet fully functional. Several features are still missing or under construction. The project is part of a study course and is freely available for educational purposes. Thank you for your understanding and support!
 
-This project is a starting point for a Flutter application.
+🍽️ About the App
+foodbook_beta is a social network or dating-style app—but for food!
+Inspired by popular apps like Instagram and Tinder, foodbook blends the best features from these platforms to create a unique, food-focused social experience.
+Idea was trigger the curiosity of people from younger generation : Z, ...
 
-A few resources to get you started if this is your first Flutter project:
+✅ Current Features
+Swipe Feature – Swipe through food posts like in Tinder
 
-- [Lab: Write your first Flutter app](https://docs.flutter.dev/get-started/codelab)
-- [Cookbook: Useful Flutter samples](https://docs.flutter.dev/cookbook)
+Post Feature – Share your food moments
 
-For help getting started with Flutter development, view the
-[online documentation](https://docs.flutter.dev/), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
+Saved Feature – Bookmark your favorite dishes
+
+Liked Feature – Like others’ food posts
+
+🚧 Roadmap / Upcoming Updates
+🌟 Beautiful UI improvements
+
+⚙️ Performance optimization
+
+🔐 Authentication Enhancements:
+
+Reset password
+
+Change username/email
+
+Stay logged in
+
+🗄️ Backend & Database integration
+
+...and more!
+
+💻 Tech Stack
+Language: Dart
+
+Framework: Flutter
+
+The entire app is developed using Flutter with Dart.
+
+
+
