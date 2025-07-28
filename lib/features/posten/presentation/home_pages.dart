@@ -1,22 +1,39 @@
+import 'dart:ui';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:video_player/video_player.dart';
+
 import 'package:foodbook_beta/shared/design_system/app_const.dart';
 import 'package:foodbook_beta/shared/design_system/text_theme.dart';
 import 'package:foodbook_beta/shared/design_system/colors_digital.dart';
 import 'package:foodbook_beta/features/posten/data/model/post_model.dart';
 import 'package:foodbook_beta/features/posten/logic/hive_service_provider.dart';
-import 'package:foodbook_beta/features/like/logic/liked_post_provider.dart';
-import 'package:video_player/video_player.dart';
+import 'package:foodbook_beta/features/posten/logic/post_content_provider.dart';
 
-class LikedPage extends ConsumerStatefulWidget {
-  const LikedPage({super.key});
+class HomePages extends ConsumerStatefulWidget {
+  const HomePages({super.key});
 
   @override
-  ConsumerState<LikedPage> createState() => _LikedPageState();
+  ConsumerState<HomePages> createState() => _HomePagesState();
 }
 
-class _LikedPageState extends ConsumerState<LikedPage> {
+class _HomePagesState extends ConsumerState<HomePages> {
   final Map<int, VideoPlayerController> _videoControllers = {};
+
+  @override
+  void initState() {
+    super.initState();
+
+    // Global error handling (optional but helpful)
+    FlutterError.onError = (FlutterErrorDetails details) {
+      FlutterError.dumpErrorToConsole(details);
+    };
+    PlatformDispatcher.instance.onError = (error, stack) {
+      debugPrint('Platform Error: $error\n$stack');
+      return true;
+    };
+  }
 
   @override
   void dispose() {
@@ -37,14 +54,26 @@ class _LikedPageState extends ConsumerState<LikedPage> {
     } else if (post.video != null) {
       final videoFile = post.video!;
       if (!_videoControllers.containsKey(index)) {
-        final controller = VideoPlayerController.file(videoFile);
-        controller.initialize().then((_) {
-          controller.setLooping(true);
-          controller.play();
-          setState(() {});
-        });
-        _videoControllers[index] = controller;
+        if (videoFile.existsSync()) {
+          final controller = VideoPlayerController.file(videoFile);
+          controller
+              .initialize()
+              .then((_) {
+                controller.setLooping(true);
+                controller.play();
+                if (mounted) {
+                  setState(() {});
+                }
+              })
+              .catchError((e) {
+                debugPrint("Video init error: $e");
+              });
+          _videoControllers[index] = controller;
+        } else {
+          debugPrint('Video file not found: ${videoFile.path}');
+        }
       }
+
       final controller = _videoControllers[index];
       if (controller != null && controller.value.isInitialized) {
         content = ClipRRect(
@@ -61,6 +90,9 @@ class _LikedPageState extends ConsumerState<LikedPage> {
       content = const SizedBox();
     }
 
+    bool liked = post.liked;
+    int likeCount = liked ? 1 : 0;
+
     return Center(
       child: ConstrainedBox(
         constraints: const BoxConstraints(maxWidth: 500),
@@ -71,7 +103,7 @@ class _LikedPageState extends ConsumerState<LikedPage> {
             borderRadius: BorderRadius.circular(AppSizes.cornerRadius),
             boxShadow: [
               BoxShadow(
-                color: Colors.black.withAlpha(25),
+                color: Colors.black.withOpacity(0.1),
                 blurRadius: 8,
                 offset: const Offset(0, 4),
               ),
@@ -92,20 +124,18 @@ class _LikedPageState extends ConsumerState<LikedPage> {
                         children: [
                           IconButton(
                             icon: Icon(
-                              post.liked
-                                  ? Icons.favorite
-                                  : Icons.favorite_border,
-                              color: post.liked ? orange : null,
+                              liked ? Icons.favorite : Icons.favorite_border,
+                              color: liked ? orange : null,
                             ),
                             onPressed: () {
                               setLikeState(() {
-                                setState(() {
-                                  post.liked = !post.liked;
-                                });
+                                liked = !liked;
+                                post.liked = liked;
+                                likeCount = liked ? 1 : 0;
                               });
                             },
                           ),
-                          Text(post.liked ? '1' : '0'),
+                          Text('$likeCount'),
                         ],
                       );
                     },
@@ -156,7 +186,8 @@ class _LikedPageState extends ConsumerState<LikedPage> {
                                             );
                                             final path =
                                                 post.image?.path ??
-                                                post.video!.path;
+                                                post.video?.path ??
+                                                'unknown';
                                             await hiveService.set<String>(
                                               'recipes',
                                               path,
@@ -197,17 +228,19 @@ class _LikedPageState extends ConsumerState<LikedPage> {
 
   @override
   Widget build(BuildContext context) {
-    final likedPosts = ref.watch(likedPostsProvider);
+    final posts = ref.watch(postContentProvider);
 
     return Scaffold(
-      appBar: AppBar(title: const Text('Liked Posts')),
-      body: likedPosts.isEmpty
-          ? const Center(child: Text('No liked posts yet'))
+      appBar: AppBar(
+        title: Text('FOODBOOK', style: TextStyle(color: orange)),
+      ),
+      body: posts.isEmpty
+          ? const Center(child: Text('No posts yet'))
           : ListView.builder(
               padding: const EdgeInsets.all(AppSizes.spacing),
-              itemCount: likedPosts.length,
+              itemCount: posts.length,
               itemBuilder: (context, index) {
-                final post = likedPosts[index];
+                final post = posts[index];
                 return _buildPost(post, index);
               },
             ),

@@ -1,5 +1,5 @@
 // lib/routes/shell_router.dart
-import 'package:foodbook_beta/core/widgets/bottom_nav/bottom_nav_wrapper.dart';
+import 'package:foodbook_beta/shared/widgets/bottom_nav_wrapper.dart';
 import 'package:foodbook_beta/routes/add_router.dart';
 import 'package:foodbook_beta/routes/home_route.dart';
 import 'package:foodbook_beta/routes/like_router.dart';

@@ -1,4 +1,4 @@
-import 'package:foodbook_beta/features/home/presentation/home_pages.dart';
+import 'package:foodbook_beta/features/posten/presentation/home_pages.dart';
 import 'package:go_router/go_router.dart';
 
 final List<GoRoute> homeRoutes = [

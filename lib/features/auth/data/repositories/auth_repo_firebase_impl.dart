@@ -1,6 +1,6 @@
 import 'package:foodbook_beta/features/auth/data/datasources/firebase_auth_datasource.dart';
-import 'package:foodbook_beta/features/auth/domain/entities/user.dart';
-import 'package:foodbook_beta/features/auth/domain/repositories/auth_repository.dart';
+import 'package:foodbook_beta/features/auth/domain/models/user.dart';
+import 'package:foodbook_beta/features/auth/domain/models/auth_repository.dart';
 
 class AuthRepoFirebaseImpl extends AuthRepository {
   final FirebaseAuthDatasource datasource;

@@ -1,4 +1,4 @@
-import 'package:foodbook_beta/features/swipe/presentation/swipe_pages.dart';
+import 'package:foodbook_beta/features/posten/presentation/swipe_pages.dart';
 import 'package:go_router/go_router.dart';
 
 final List<GoRoute> swipeRoutes = [
