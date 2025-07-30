@@ -1,0 +1,31 @@
+import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:foodbook_beta/features/posten/presentation/widgets/post_editor_page.dart';
+import 'package:foodbook_beta/shared/common_widgets/bottom_nav_bar.dart';
+import 'post_widget.dart';
+
+class SurfenPage extends ConsumerWidget {
+  const SurfenPage({super.key});
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final postController = ref.watch(postControllerProvider);
+
+    return Scaffold(
+      body: postController.posts.isEmpty
+          ? const Center(child: Text('No posts yet'))
+          : ListView.builder(
+              padding: const EdgeInsets.all(16),
+              itemCount: postController.posts.length,
+              itemBuilder: (context, index) {
+                final post = postController.posts[index];
+                return Padding(
+                  padding: const EdgeInsets.symmetric(vertical: 8),
+                  child: PostWidget(post: post),
+                );
+              },
+            ),
+      bottomNavigationBar: BottomNavBar(currentIndex: 1),
+    );
+  }
+}

@@ -1,12 +1,15 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:foodbook_beta/features/auth/presentation/controller/login_controller.dart';
+import 'package:foodbook_beta/features/auth/presentation/states/auth_provider.dart';
 import 'package:foodbook_beta/shared/design_system/app_const.dart';
 import 'package:foodbook_beta/shared/design_system/text_theme.dart';
 import 'package:foodbook_beta/shared/design_system/colors_digital.dart';
 import 'package:foodbook_beta/features/auth/presentation/feature_assets/custom_text.dart';
 import 'package:foodbook_beta/features/auth/presentation/feature_assets/image_path.dart';
 import 'package:go_router/go_router.dart';
+
+import '../../domain/models/user.dart';
 
 class LoginPages extends ConsumerWidget {
   LoginPages({super.key});
@@ -17,7 +20,20 @@ class LoginPages extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final controller = AuthController(ref);
-    controller.listenAuthState(context);
+    ref.listen<AsyncValue<User?>>(authNotifierProvider, (previous, next) {
+      next.whenOrNull(
+        data: (user) {
+          if (user != null) {
+            context.go('/surfen');
+          }
+        },
+        error: (error, stackTrace) {
+          ScaffoldMessenger.of(
+            context,
+          ).showSnackBar(SnackBar(content: Text(error.toString())));
+        },
+      );
+    });
 
     final authState = controller.watchAuthState();
     final avatarState = controller.watchAvatarState();

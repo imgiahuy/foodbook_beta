@@ -22,19 +22,19 @@ class _BottomNavBarState extends State<BottomNavBar> {
       onTap: (index) {
         switch (index) {
           case 0:
-            context.go('/swipe');
+            context.go('/surfen/swipe');
             break;
           case 1:
-            context.go('/home');
+            context.go('/surfen');
             break;
           case 2:
-            context.go('/add');
+            context.go('/surfen/add');
             break;
           case 3:
             context.go('/like');
             break;
           case 4:
-            context.go('/profile');
+            context.go('/surfen/profile');
             break;
         }
       },

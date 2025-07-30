@@ -16,7 +16,7 @@ class BottomNavWrapper extends StatelessWidget {
 
     int getIndex() {
       if (location.startsWith('/swipe')) return 0;
-      if (location.startsWith('/home')) return 1;
+      if (location.startsWith('/surfen')) return 1;
       if (location.startsWith('/add')) return 2;
       if (location.startsWith('/like')) return 3;
       if (location.startsWith('/profile')) return 4;

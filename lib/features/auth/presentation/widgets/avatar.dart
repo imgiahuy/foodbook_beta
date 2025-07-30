@@ -18,8 +18,7 @@ class Avatar extends ConsumerWidget {
         radius: 50,
         backgroundImage: avatarFile != null
             ? FileImage(avatarFile)
-            : const AssetImage('assets/images/default_avatar.png')
-                  as ImageProvider,
+            : const AssetImage('assets/images/avatar-1.jpg') as ImageProvider,
         child: avatarFile == null
             ? Icon(Icons.camera_alt, size: 30, color: white)
             : null,

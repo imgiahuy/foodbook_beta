@@ -3,6 +3,7 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:foodbook_beta/features/auth/presentation/controller/profile_controller.dart';
+import 'package:foodbook_beta/shared/common_widgets/bottom_nav_bar.dart';
 import 'package:foodbook_beta/shared/design_system/app_const.dart';
 import 'package:foodbook_beta/shared/design_system/text_theme.dart';
 import 'package:foodbook_beta/shared/design_system/colors_digital.dart';
@@ -23,6 +24,7 @@ class ProfilePages extends ConsumerWidget {
     final screenWidth = MediaQuery.of(context).size.width;
     final screenHeight = MediaQuery.of(context).size.height;
     return Scaffold(
+      bottomNavigationBar: BottomNavBar(currentIndex: 4),
       body: Stack(
         children: [
           Column(

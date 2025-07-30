@@ -9,7 +9,6 @@ import 'package:foodbook_beta/features/auth/presentation/states/auth_provider.da
 import 'package:foodbook_beta/features/auth/presentation/states/avatar_notifier.dart';
 import 'package:foodbook_beta/shared/design_system/app_const.dart';
 import 'package:foodbook_beta/shared/design_system/colors_digital.dart';
-import 'package:go_router/go_router.dart';
 
 class AuthController {
   final WidgetRef ref;
@@ -18,23 +17,6 @@ class AuthController {
 
   void signIn(String email, String password) {
     ref.read(authNotifierProvider.notifier).signIn(email, password);
-  }
-
-  void listenAuthState(BuildContext context) {
-    ref.listen<AsyncValue<User?>>(authNotifierProvider, (previous, next) {
-      next.whenOrNull(
-        data: (user) {
-          if (user != null) {
-            context.goNamed('home');
-          }
-        },
-        error: (error, _) {
-          ScaffoldMessenger.of(
-            context,
-          ).showSnackBar(SnackBar(content: Text(error.toString())));
-        },
-      );
-    });
   }
 
   AsyncValue<User?> watchAuthState() {
