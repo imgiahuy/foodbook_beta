@@ -6,7 +6,6 @@ import 'package:foodbook_beta/features/auth/domain/models/user.dart';
 import 'package:foodbook_beta/features/auth/presentation/feature_assets/custom_text.dart';
 import 'package:foodbook_beta/features/auth/presentation/feature_assets/image_path.dart';
 import 'package:foodbook_beta/features/auth/presentation/states/auth_provider.dart';
-import 'package:foodbook_beta/features/auth/presentation/states/avatar_notifier.dart';
 import 'package:foodbook_beta/shared/design_system/app_const.dart';
 import 'package:foodbook_beta/shared/design_system/colors_digital.dart';
 
@@ -23,15 +22,9 @@ class AuthController {
     return ref.watch(authNotifierProvider);
   }
 
-  File? watchAvatarState() {
-    return ref.watch(avatarFileProvider);
-  }
-
-  CircleAvatar circleAvatarDef(File? avatarState) {
+  CircleAvatar circleAvatarDef() {
     return CircleAvatar(
-      backgroundImage: avatarState == null
-          ? AssetImage(ImagePath.logo)
-          : FileImage(avatarState),
+      backgroundImage: AssetImage(ImagePath.logo),
       backgroundColor: yellow,
       radius: AppSizes.circleLogoSize - 40,
     );

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:foodbook_beta/features/posten/domain/model/post.dart';
+import 'package:foodbook_beta/features/posten/presentation/state/post_controller_provider.dart';
 import 'package:foodbook_beta/features/posten/presentation/widgets/post_editor_page.dart';
 import 'package:foodbook_beta/shared/common_widgets/bottom_nav_bar.dart';
 import 'post_widget.dart';
@@ -70,7 +71,7 @@ class _SwipePageState extends ConsumerState<SwipePage> {
           );
           setState(() {
             dismissedPostIds
-                .clear(); // reset dismissed posts when returning, optional
+                .clear();
           });
         },
       ),

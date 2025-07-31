@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:foodbook_beta/features/auth/data/datasources/firebase_auth_datasource.dart';
 import 'package:foodbook_beta/features/auth/domain/models/user.dart';
 import 'package:foodbook_beta/features/auth/domain/models/auth_repository.dart';
@@ -9,7 +11,7 @@ class AuthRepoFirebaseImpl extends AuthRepository {
 
   @override
   Future<User?> getCurrentUser() async {
-    final userModel = datasource.currentUser;
+    final userModel = await datasource.currentUser; // now async
     return userModel?.toEntity();
   }
 
@@ -25,8 +27,23 @@ class AuthRepoFirebaseImpl extends AuthRepository {
   }
 
   @override
-  Future<User?> signUp(String email, String password, String username) async {
-    final userModel = await datasource.signUp(email, password, username);
+  Future<User?> signUp(
+    String email,
+    String password,
+    String username, [
+    File? avatarFile,
+  ]) async {
+    final userModel = await datasource.signUp(
+      email,
+      password,
+      username,
+      avatarFile,
+    );
     return userModel?.toEntity();
+  }
+
+  @override
+  Future<void> updateAvatar(File avatarFile) async {
+    await datasource.updateAvatar(avatarFile);
   }
 }

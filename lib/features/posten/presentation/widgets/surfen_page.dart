@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:foodbook_beta/features/posten/presentation/widgets/post_editor_page.dart';
+import 'package:foodbook_beta/features/posten/presentation/state/post_controller_provider.dart';
 import 'package:foodbook_beta/shared/common_widgets/bottom_nav_bar.dart';
 import 'post_widget.dart';
 
@@ -10,6 +10,10 @@ class SurfenPage extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final postController = ref.watch(postControllerProvider);
+
+    if (postController.posts.isEmpty) {
+      Future.microtask(() => ref.read(postControllerProvider).loadPosts());
+    }
 
     return Scaffold(
       body: postController.posts.isEmpty

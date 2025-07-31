@@ -1,7 +1,5 @@
-import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:foodbook_beta/features/posten/domain/model/post.dart';
-import 'package:video_player/video_player.dart';
 
 class PostWidget extends StatefulWidget {
   final PostContent post;
@@ -13,9 +11,6 @@ class PostWidget extends StatefulWidget {
 }
 
 class _PostWidgetState extends State<PostWidget> {
-  VideoPlayerController? _videoController;
-  String? _currentVideoPath;
-
   late bool _isLiked;
   int _likeCount = 0;
 
@@ -23,41 +18,13 @@ class _PostWidgetState extends State<PostWidget> {
   void initState() {
     super.initState();
     _isLiked = widget.post.liked;
-    if (widget.post.video != null) {
-      _initializeVideo(File(widget.post.video!));
-    }
-  }
-
-  Future<void> _initializeVideo(File videoFile) async {
-    // If same video is already loaded, don't re-initialize
-    if (_currentVideoPath == videoFile.path && _videoController != null) return;
-
-    await _videoController?.dispose();
-    _videoController = VideoPlayerController.file(videoFile);
-
-    try {
-      await _videoController!.initialize();
-      _videoController!.setLooping(true);
-      setState(() {
-        _currentVideoPath = videoFile.path;
-        _videoController!.play();
-      });
-    } catch (e) {
-      debugPrint('Video initialization failed: $e');
-    }
-  }
-
-  @override
-  void dispose() {
-    _videoController?.dispose();
-    super.dispose();
   }
 
   void _toggleLike() {
     setState(() {
       _isLiked = !_isLiked;
       _likeCount += _isLiked ? 1 : -1;
-      widget.post.liked = _isLiked; // Update PostContent liked status
+      widget.post.liked = _isLiked;
     });
   }
 
@@ -106,22 +73,23 @@ class _PostWidgetState extends State<PostWidget> {
         ),
         child: Stack(
           children: [
-            // Media: Image or Video
+            // Background Post Image
             ClipRRect(
               borderRadius: BorderRadius.circular(30),
               child: post.image != null
-                  ? Image.file(
-                      File(post.image!),
+                  ? Image.network(
+                      post.image!,
                       width: double.infinity,
                       height: double.infinity,
                       fit: BoxFit.cover,
-                    )
-                  : post.video != null &&
-                        _videoController != null &&
-                        _videoController!.value.isInitialized
-                  ? AspectRatio(
-                      aspectRatio: _videoController!.value.aspectRatio,
-                      child: VideoPlayer(_videoController!),
+                      errorBuilder: (context, error, stackTrace) => Container(
+                        color: Colors.grey.shade200,
+                        child: const Icon(
+                          Icons.broken_image,
+                          size: 50,
+                          color: Colors.grey,
+                        ),
+                      ),
                     )
                   : Container(
                       width: double.infinity,
@@ -137,15 +105,19 @@ class _PostWidgetState extends State<PostWidget> {
                     ),
             ),
 
-            // Top User Info
+            // Username & Avatar
             Positioned(
               top: 10,
               left: 10,
               child: Row(
                 children: [
-                  const CircleAvatar(
+                  CircleAvatar(
                     radius: 25,
-                    backgroundImage: AssetImage('assets/images/avatar-1.jpg'),
+                    backgroundImage: post.avatarUrl != null &&
+                            post.avatarUrl!.isNotEmpty
+                        ? NetworkImage(post.avatarUrl!)
+                        : const AssetImage('assets/images/avatar-1.jpg')
+                            as ImageProvider,
                   ),
                   const SizedBox(width: 8),
                   Text(
@@ -166,13 +138,12 @@ class _PostWidgetState extends State<PostWidget> {
               ),
             ),
 
-            // Bottom Actions (like & recipe)
+            // Like & Recipe Buttons
             Positioned(
               bottom: 15,
               left: 20,
               child: Row(
                 children: [
-                  // Like Button
                   GestureDetector(
                     onTap: _toggleLike,
                     child: Icon(
@@ -189,10 +160,7 @@ class _PostWidgetState extends State<PostWidget> {
                       fontWeight: FontWeight.bold,
                     ),
                   ),
-
                   const SizedBox(width: 20),
-
-                  // Recipe Button
                   GestureDetector(
                     onTap: () => _showRecipeDialog(context),
                     child: const Icon(

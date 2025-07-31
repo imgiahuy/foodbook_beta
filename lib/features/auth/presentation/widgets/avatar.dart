@@ -1,28 +1,23 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:foodbook_beta/shared/design_system/colors_digital.dart';
-import 'package:foodbook_beta/features/auth/presentation/states/avatar_notifier.dart';
 
-class Avatar extends ConsumerWidget {
-  final VoidCallback onTap;
+class Avatar extends StatelessWidget {
+  final String? imageUrl;
+  final VoidCallback? onTap;
 
-  const Avatar({required this.onTap, super.key});
+  const Avatar({this.imageUrl, this.onTap});
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
-    final avatarFile = ref.watch(avatarFileProvider);
-
+  Widget build(BuildContext context) {
     return GestureDetector(
       onTap: onTap,
       child: CircleAvatar(
-        radius: 50,
-        backgroundImage: avatarFile != null
-            ? FileImage(avatarFile)
-            : const AssetImage('assets/images/avatar-1.jpg') as ImageProvider,
-        child: avatarFile == null
-            ? Icon(Icons.camera_alt, size: 30, color: white)
-            : null,
+        radius: 40,
+        backgroundImage: imageUrl != null
+            ? NetworkImage(imageUrl!)
+            : const AssetImage('assets/images/avatar-1.jpgr')
+                as ImageProvider,
       ),
     );
   }
 }
+

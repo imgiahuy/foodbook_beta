@@ -1,12 +1,19 @@
 import 'dart:io';
 
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:foodbook_beta/features/auth/domain/models/auth_repository.dart';
 import 'package:foodbook_beta/features/posten/domain/model/post.dart';
+import 'package:foodbook_beta/features/posten/domain/model/post_repository.dart';
 import 'package:image_picker/image_picker.dart';
 
 class PostController extends ChangeNotifier {
+  final PostRepository _postRepository;
+  final AuthRepository _authRepository;
+
+  PostController(this._postRepository, this._authRepository);
+
   File? image;
-  File? video;
   String recipe = "";
 
   final List<PostContent> posts = [];
@@ -17,23 +24,12 @@ class PostController extends ChangeNotifier {
     final pickedFile = await _picker.pickImage(source: ImageSource.gallery);
     if (pickedFile != null) {
       image = File(pickedFile.path);
-      video = null;
-      notifyListeners();
-    }
-  }
-
-  Future<void> pickVideo() async {
-    final pickedFile = await _picker.pickVideo(source: ImageSource.gallery);
-    if (pickedFile != null) {
-      video = File(pickedFile.path);
-      image = null;
       notifyListeners();
     }
   }
 
   void clearDraft() {
     image = null;
-    video = null;
     recipe = "";
     notifyListeners();
   }
@@ -43,18 +39,33 @@ class PostController extends ChangeNotifier {
     notifyListeners();
   }
 
+  Future<void> loadPosts() async {
+    posts.clear();
+    final allPosts = await (_postRepository as dynamic).loadAllRemote();
+    posts.addAll(allPosts);
+    notifyListeners();
+  }
+
   Future<PostContent> postContent() async {
+    final user = await _authRepository.getCurrentUser();
+    if (user == null) {
+      throw Exception('No logged in user');
+    }
     final newPost = PostContent(
-      username: "someUserId",
+      username: user.username,
       postid: DateTime.now().millisecondsSinceEpoch.toString(),
       image: image?.path,
-      video: video?.path,
+      avatarUrl: user.avatar,
       recipe: recipe,
       liked: false,
     );
-    posts.insert(0, newPost);
+
+    await _postRepository.saveRemote(newPost, imageFile: image);
+
+    // Re-fetch all posts after saving
+    await loadPosts();
+
     clearDraft();
-    notifyListeners();
     return newPost;
   }
 }

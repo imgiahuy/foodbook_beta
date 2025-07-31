@@ -36,7 +36,6 @@ class LoginPages extends ConsumerWidget {
     });
 
     final authState = controller.watchAuthState();
-    final avatarState = controller.watchAvatarState();
 
     final screenWidth = MediaQuery.of(context).size.width;
     return Scaffold(
@@ -101,7 +100,7 @@ class LoginPages extends ConsumerWidget {
                 child: Column(
                   children: [
                     SizedBox(height: AppSizes.largeSpacing),
-                    controller.circleAvatarDef(avatarState),
+                    controller.circleAvatarDef(),
                     SizedBox(height: AppSizes.largeSpacing),
                     SizedBox(
                       height: screenWidth * 1.1,

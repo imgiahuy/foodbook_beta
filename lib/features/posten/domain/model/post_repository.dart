@@ -1,10 +1,8 @@
-import 'package:foodbook_beta/features/posten/domain/model/post.dart';
+import 'dart:io';
+import '../model/post.dart';
 
 abstract class PostRepository {
-  void saveLocal(PostContent post);
-  PostContent loadLocal(int postid);
-  void saveRemote(PostContent post);
-  PostContent loadRemote(int postid);
-  void deleteLocal(int postid);
-  void deleteRemote(int postid);
+  Future<void> saveRemote(PostContent post, {File? imageFile});
+  Future<PostContent?> loadRemote(String postid);
+  Future<void> deleteRemote(String postid);
 }

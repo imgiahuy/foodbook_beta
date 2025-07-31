@@ -5,19 +5,29 @@ import 'package:foodbook_beta/features/auth/domain/models/user.dart';
 import 'package:foodbook_beta/features/auth/domain/models/auth_repository.dart';
 import 'package:foodbook_beta/features/auth/application/service/get_current_user_usecase.dart';
 import 'package:foodbook_beta/features/auth/application/service/sign_in_usecase.dart';
+import 'package:foodbook_beta/features/posten/data/datasource/cloudinary_service.dart';
 import 'auth_notifier.dart';
 import 'package:foodbook_beta/features/auth/application/service/sign_out_usecase.dart';
 import 'package:foodbook_beta/features/auth/application/service/sign_up_usecase.dart';
+import 'package:foodbook_beta/features/auth/application/service/update_avatar_usecase.dart';
 
-final authDatasourceProvider = Provider<FirebaseAuthDatasource>((ref) {
-  return FirebaseAuthDatasource();
+final cloudinaryServiceProvider = Provider<CloudinaryService>((ref) {
+  return CloudinaryService();
 });
 
+// Provide the Firebase auth datasource, injecting CloudinaryService
+final authDatasourceProvider = Provider<FirebaseAuthDatasource>((ref) {
+  final cloudinaryService = ref.read(cloudinaryServiceProvider);
+  return FirebaseAuthDatasource(cloudinaryService);
+});
+
+// Provide the auth repository implementation
 final authRepositoryProvider = Provider<AuthRepository>((ref) {
   final datasource = ref.read(authDatasourceProvider);
   return AuthRepoFirebaseImpl(datasource);
 });
 
+// Use cases
 final signInUseCaseProvider = Provider<SignInUsecase>((ref) {
   return SignInUsecase(ref.read(authRepositoryProvider));
 });
@@ -34,14 +44,23 @@ final getCurrentUserUseCaseProvider = Provider<GetCurrentUserUsecase>((ref) {
   return GetCurrentUserUsecase(ref.read(authRepositoryProvider));
 });
 
+// Your new UpdateAvatarUseCase provider
+final updateAvatarUseCaseProvider = Provider<UpdateAvatarUseCase>((ref) {
+  final authRepository = ref.read(authRepositoryProvider);
+  return UpdateAvatarUseCase(authRepository);
+});
+
+// AuthNotifier provider which manages auth state
 final authNotifierProvider =
     StateNotifierProvider<AuthNotifier, AsyncValue<User?>>((ref) {
-      return AuthNotifier(
-        signInUseCase: ref.read(signInUseCaseProvider),
-        signUpUseCase: ref.read(signUpUseCaseProvider),
-        signOutUseCase: ref.read(signOutUseCaseProvider),
-        getCurrentUserUseCase: ref.read(getCurrentUserUseCaseProvider),
-      );
-    });
+  return AuthNotifier(
+    signInUseCase: ref.read(signInUseCaseProvider),
+    signUpUseCase: ref.read(signUpUseCaseProvider),
+    signOutUseCase: ref.read(signOutUseCaseProvider),
+    getCurrentUserUseCase: ref.read(getCurrentUserUseCaseProvider),
+    updateAvatarUseCase: ref.read(updateAvatarUseCaseProvider),
+  );
+});
 
+// Other state providers, e.g. for terms acceptance
 final termsAcceptedProvider = StateProvider<bool>((ref) => false);

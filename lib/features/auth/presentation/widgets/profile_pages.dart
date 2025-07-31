@@ -10,7 +10,6 @@ import 'package:foodbook_beta/shared/design_system/colors_digital.dart';
 import 'package:foodbook_beta/features/auth/presentation/widgets/avatar.dart';
 import 'package:go_router/go_router.dart';
 import 'package:image_picker/image_picker.dart';
-import 'package:foodbook_beta/features/auth/presentation/states/avatar_notifier.dart';
 
 class ProfilePages extends ConsumerWidget {
   const ProfilePages({super.key});
@@ -82,16 +81,9 @@ class ProfilePages extends ConsumerWidget {
                     child: Column(
                       children: [
                         Avatar(
-                          onTap: () async {
-                            final picker = ImagePicker();
-                            final pickedFile = await picker.pickImage(
-                              source: ImageSource.gallery,
-                            );
-                            if (pickedFile != null) {
-                              final file = File(pickedFile.path);
-                              ref.read(avatarFileProvider.notifier).state =
-                                  file;
-                            }
+                          imageUrl: user?.avatar,
+                          onTap:() async {
+                            await controller.pickAndUploadAvatar(context);
                           },
                         ),
                         SizedBox(
