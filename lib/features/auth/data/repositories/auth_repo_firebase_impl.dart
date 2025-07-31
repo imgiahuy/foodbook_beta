@@ -46,4 +46,9 @@ class AuthRepoFirebaseImpl extends AuthRepository {
   Future<void> updateAvatar(File avatarFile) async {
     await datasource.updateAvatar(avatarFile);
   }
+
+  @override
+  Future<void> updateUsername(String newUsername) async {
+    await datasource.updateUsername(newUsername);
+  }
 }

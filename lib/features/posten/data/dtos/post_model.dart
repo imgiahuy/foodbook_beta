@@ -1,12 +1,27 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:hive/hive.dart';
 import 'package:foodbook_beta/features/posten/domain/model/post.dart';
 
+part 'post_content_dto.g.dart'; // Hive generator
+
+@HiveType(typeId: 0) // Assign a unique typeId
 class PostContentDto {
+  @HiveField(0)
   final String? username;
+
+  @HiveField(1)
   final String? postid;
+
+  @HiveField(2)
   final String? image;
+
+  @HiveField(3)
   final String? recipe;
-  final String? avatarUrl; // <-- add here
+
+  @HiveField(4)
+  final String? avatarUrl;
+
+  @HiveField(5)
   final bool liked;
 
   PostContentDto({
@@ -14,11 +29,11 @@ class PostContentDto {
     this.postid,
     this.image,
     this.recipe,
-    this.avatarUrl, // <-- initialize
+    this.avatarUrl,
     this.liked = false,
   });
 
-  /// From Firestore DocumentSnapshot
+  /// From Firestore
   factory PostContentDto.fromFirestore(DocumentSnapshot doc) {
     final data = doc.data() as Map<String, dynamic>;
     return PostContentDto(
@@ -26,43 +41,43 @@ class PostContentDto {
       postid: data['postid'] as String? ?? doc.id,
       image: data['image'] as String?,
       recipe: data['recipe'] as String?,
-      avatarUrl: data['avatarUrl'] as String?, // <-- map here
+      avatarUrl: data['avatarUrl'] as String?,
       liked: data['liked'] as bool? ?? false,
     );
   }
 
-  /// To Firestore JSON
+  /// To Firestore
   Map<String, dynamic> toFirestore() {
     return {
       'username': username,
       'postid': postid,
       'image': image,
       'recipe': recipe,
-      'avatarUrl': avatarUrl, // <-- save to Firestore
+      'avatarUrl': avatarUrl,
       'liked': liked,
     };
   }
 
-  /// Convert DTO -> Domain model
+  /// DTO -> Domain
   PostContent toDomain() {
     return PostContent(
       username: username,
       postid: postid,
       image: image,
       recipe: recipe,
-      avatarUrl: avatarUrl, // <-- pass to domain
+      avatarUrl: avatarUrl,
       liked: liked,
     );
   }
 
-  /// Convert Domain model -> DTO
+  /// Domain -> DTO
   factory PostContentDto.fromDomain(PostContent post) {
     return PostContentDto(
       username: post.username,
       postid: post.postid,
       image: post.image,
       recipe: post.recipe,
-      avatarUrl: post.avatarUrl, // <-- map here
+      avatarUrl: post.avatarUrl,
       liked: post.liked,
     );
   }

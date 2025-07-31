@@ -31,7 +31,7 @@ class _BottomNavBarState extends State<BottomNavBar> {
             context.go('/surfen/add');
             break;
           case 3:
-            context.go('/like');
+            context.go('surfen/book');
             break;
           case 4:
             context.go('/surfen/profile');
@@ -58,7 +58,7 @@ class _BottomNavBarState extends State<BottomNavBar> {
         ),
         BottomNavigationBarItem(
           icon: Iconify(Gridicons.heart_outline, color: white),
-          label: 'Liked',
+          label: 'Book',
         ),
         BottomNavigationBarItem(
           icon: Iconify(Healthicons.ui_user_profile_outline, color: white),

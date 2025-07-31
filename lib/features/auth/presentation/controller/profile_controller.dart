@@ -27,6 +27,20 @@ class ProfileController {
     return ref.read(authNotifierProvider).value;
   }
 
+  Future<void> updateUsername(BuildContext context, String newUsername) async {
+    try {
+      await ref.read(authNotifierProvider.notifier).updateUsername(newUsername);
+
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Username updated successfully')),
+      );
+    } catch (e) {
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(SnackBar(content: Text('Failed to update username: $e')));
+    }
+  }
+
   Future<void> pickAndUploadAvatar(BuildContext context) async {
     final picker = ImagePicker();
     try {
@@ -36,10 +50,8 @@ class ProfileController {
       final file = File(pickedFile.path);
       final notifier = ref.read(authNotifierProvider.notifier);
 
-      // Update avatar in user profile
       await notifier.updateAvatar(file);
 
-      // Refresh user state
       final user = await notifier.getCurrentUserUseCase();
       notifier.state = AsyncValue.data(user);
 
@@ -57,7 +69,6 @@ class ProfileController {
     }
   }
 
-  
   Future<void> _updatePostsAvatar(String? username, String newAvatarUrl) async {
     if (username == null) return;
 

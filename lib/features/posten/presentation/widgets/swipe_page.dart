@@ -7,6 +7,8 @@ import 'package:foodbook_beta/shared/common_widgets/bottom_nav_bar.dart';
 import 'post_widget.dart';
 
 class SwipePage extends ConsumerStatefulWidget {
+  const SwipePage({Key? key}) : super(key: key);
+
   @override
   _SwipePageState createState() => _SwipePageState();
 }
@@ -21,18 +23,16 @@ class _SwipePageState extends ConsumerState<SwipePage> {
     final posts = postController.posts;
 
     // Filter out posts dismissed locally
-    final visiblePosts = posts
-        .where((p) => !dismissedPostIds.contains(p.postid))
-        .toList();
+    final visiblePosts = posts.where((p) => !dismissedPostIds.contains(p.postid)).toList();
 
     return Scaffold(
-      bottomNavigationBar: BottomNavBar(currentIndex: 0),
-      appBar: AppBar(title: Text("Swipe Cards Demo")),
+      appBar: AppBar(title: const Text("Swipe Cards Demo")),
+      bottomNavigationBar: const BottomNavBar(currentIndex: 0),
       body: Center(
         child: Stack(
           children: visiblePosts.asMap().entries.map((entry) {
-            int index = entry.key;
-            PostContent post = entry.value;
+            final index = entry.key;
+            final post = entry.value;
 
             return Dismissible(
               key: Key(post.postid!),
@@ -50,28 +50,34 @@ class _SwipePageState extends ConsumerState<SwipePage> {
               background: Container(
                 color: Colors.red,
                 alignment: Alignment.centerLeft,
-                child: Icon(Icons.thumb_down, color: Colors.white),
+                padding: const EdgeInsets.only(left: 20),
+                child: const Icon(Icons.thumb_down, color: Colors.white),
               ),
               secondaryBackground: Container(
                 color: Colors.green,
                 alignment: Alignment.centerRight,
-                child: Icon(Icons.thumb_up, color: Colors.white),
+                padding: const EdgeInsets.only(right: 20),
+                child: const Icon(Icons.thumb_up, color: Colors.white),
               ),
-              child: PostWidget(post: post),
+              child: PostWidget(
+                post: post,
+                onLikeToggle: (post) async {
+                  await ref.read(postControllerProvider.notifier).toggleLike(post);
+                },
+              ),
             );
           }).toList(),
         ),
       ),
       floatingActionButton: FloatingActionButton(
-        child: Icon(Icons.add),
+        child: const Icon(Icons.add),
         onPressed: () async {
           await Navigator.push(
             context,
-            MaterialPageRoute(builder: (_) => PostEditor()),
+            MaterialPageRoute(builder: (_) => const PostEditor()),
           );
           setState(() {
-            dismissedPostIds
-                .clear();
+            dismissedPostIds.clear();
           });
         },
       ),

@@ -1,6 +1,4 @@
 import 'dart:io';
-
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:foodbook_beta/features/auth/domain/models/auth_repository.dart';
 import 'package:foodbook_beta/features/posten/domain/model/post.dart';
@@ -62,10 +60,41 @@ class PostController extends ChangeNotifier {
 
     await _postRepository.saveRemote(newPost, imageFile: image);
 
-    // Re-fetch all posts after saving
     await loadPosts();
 
     clearDraft();
     return newPost;
+  }
+
+  Future<void> toggleLike(PostContent post) async {
+    // Toggle liked state
+    final updatedPost = PostContent(
+      username: post.username,
+      postid: post.postid,
+      image: post.image,
+      recipe: post.recipe,
+      avatarUrl: post.avatarUrl,
+      liked: !post.liked,
+    );
+
+    if (updatedPost.liked) {
+      // Save locally when liked
+      await _postRepository.saveLocal(updatedPost);
+    } else {
+      // Delete locally when unliked
+      await _postRepository.deleteLocal(updatedPost.postid!);
+    }
+
+    // Update in list and notify UI
+    final index = posts.indexWhere((p) => p.postid == post.postid);
+    if (index != -1) {
+      posts[index] = updatedPost;
+      notifyListeners();
+    }
+  }
+
+  Future<String?> getCurrentUsername() async {
+    final user = await _authRepository.getCurrentUser();
+    return user?.username;
   }
 }

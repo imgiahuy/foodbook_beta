@@ -8,5 +8,6 @@ abstract class AuthRepository {
   Future<void> signOut();
   Future<User?> getCurrentUser();
   Future<void> updateAvatar(File avatarFile);
+  Future<void> updateUsername(String newUsername);
 
 }

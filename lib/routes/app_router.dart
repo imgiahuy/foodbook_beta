@@ -55,6 +55,11 @@ final GoRouter appRouter = GoRouter(
           name: 'add',
           builder: (context, state) => PostEditor(),
         ),
+        GoRoute(
+          path: '/book',
+          name: 'book',
+          builder: (context, state) => PostEditor(),
+        ),
       ],
     ),
   ],

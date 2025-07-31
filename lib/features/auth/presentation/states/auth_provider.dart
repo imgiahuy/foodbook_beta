@@ -1,4 +1,5 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:foodbook_beta/features/auth/application/service/update_username.dart';
 import 'package:foodbook_beta/features/auth/data/datasources/firebase_auth_datasource.dart';
 import 'package:foodbook_beta/features/auth/data/repositories/auth_repo_firebase_impl.dart';
 import 'package:foodbook_beta/features/auth/domain/models/user.dart';
@@ -44,23 +45,28 @@ final getCurrentUserUseCaseProvider = Provider<GetCurrentUserUsecase>((ref) {
   return GetCurrentUserUsecase(ref.read(authRepositoryProvider));
 });
 
-// Your new UpdateAvatarUseCase provider
 final updateAvatarUseCaseProvider = Provider<UpdateAvatarUseCase>((ref) {
   final authRepository = ref.read(authRepositoryProvider);
   return UpdateAvatarUseCase(authRepository);
 });
 
+final updateUserNameUseCaseProvider = Provider<UpdateUserNameUseCase>((ref) {
+  final authRepository = ref.read(authRepositoryProvider);
+  return UpdateUserNameUseCase(authRepository);
+});
+
 // AuthNotifier provider which manages auth state
 final authNotifierProvider =
     StateNotifierProvider<AuthNotifier, AsyncValue<User?>>((ref) {
-  return AuthNotifier(
-    signInUseCase: ref.read(signInUseCaseProvider),
-    signUpUseCase: ref.read(signUpUseCaseProvider),
-    signOutUseCase: ref.read(signOutUseCaseProvider),
-    getCurrentUserUseCase: ref.read(getCurrentUserUseCaseProvider),
-    updateAvatarUseCase: ref.read(updateAvatarUseCaseProvider),
-  );
-});
+      return AuthNotifier(
+        signInUseCase: ref.read(signInUseCaseProvider),
+        signUpUseCase: ref.read(signUpUseCaseProvider),
+        signOutUseCase: ref.read(signOutUseCaseProvider),
+        getCurrentUserUseCase: ref.read(getCurrentUserUseCaseProvider),
+        updateAvatarUseCase: ref.read(updateAvatarUseCaseProvider),
+        updateUserNameUseCase: ref.read(updateUserNameUseCaseProvider)
+      );
+    });
 
 // Other state providers, e.g. for terms acceptance
 final termsAcceptedProvider = StateProvider<bool>((ref) => false);

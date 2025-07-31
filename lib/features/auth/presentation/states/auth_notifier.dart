@@ -5,6 +5,7 @@ import 'package:foodbook_beta/features/auth/application/service/sign_up_usecase.
 import 'package:foodbook_beta/features/auth/application/service/sign_in_usecase.dart';
 import 'package:foodbook_beta/features/auth/application/service/sign_out_usecase.dart';
 import 'package:foodbook_beta/features/auth/application/service/update_avatar_usecase.dart';
+import 'package:foodbook_beta/features/auth/application/service/update_username.dart';
 import '../../domain/models/user.dart';
 
 class AuthNotifier extends StateNotifier<AsyncValue<User?>> {
@@ -13,6 +14,7 @@ class AuthNotifier extends StateNotifier<AsyncValue<User?>> {
   final SignOutUsecase signOutUseCase;
   final GetCurrentUserUsecase getCurrentUserUseCase;
   final UpdateAvatarUseCase updateAvatarUseCase;
+  final UpdateUserNameUseCase updateUserNameUseCase;
 
   AuthNotifier({
     required this.signInUseCase,
@@ -20,6 +22,7 @@ class AuthNotifier extends StateNotifier<AsyncValue<User?>> {
     required this.signOutUseCase,
     required this.getCurrentUserUseCase,
     required this.updateAvatarUseCase,
+    required this.updateUserNameUseCase
   }) : super(const AsyncValue.data(null));
 
   /// Sign In
@@ -60,14 +63,26 @@ class AuthNotifier extends StateNotifier<AsyncValue<User?>> {
     state = const AsyncValue.loading();
     try {
       await updateAvatarUseCase(avatarFile);
-
-      // Refresh current user to get updated avatar URL
       final user = await getCurrentUserUseCase();
       state = AsyncValue.data(user);
     } catch (e, st) {
       state = AsyncValue.error(e, st);
     }
   }
+
+    /// Update Avatar
+  Future<void> updateUsername(String newUsername) async {
+    state = const AsyncValue.loading();
+    try {
+      await updateUserNameUseCase(newUsername);
+      final user = await getCurrentUserUseCase();
+      state = AsyncValue.data(user);
+    } catch (e, st) {
+      state = AsyncValue.error(e, st);
+    }
+  }
+
+
   Future<void> loadCurrentUser() async {
     state = const AsyncValue.loading();
     try {

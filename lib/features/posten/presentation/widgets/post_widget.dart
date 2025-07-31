@@ -1,10 +1,17 @@
 import 'package:flutter/material.dart';
 import 'package:foodbook_beta/features/posten/domain/model/post.dart';
 
+typedef LikeToggleCallback = Future<void> Function(PostContent post);
+
 class PostWidget extends StatefulWidget {
   final PostContent post;
+  final LikeToggleCallback onLikeToggle;
 
-  const PostWidget({Key? key, required this.post}) : super(key: key);
+  const PostWidget({
+    Key? key,
+    required this.post,
+    required this.onLikeToggle,
+  }) : super(key: key);
 
   @override
   State<PostWidget> createState() => _PostWidgetState();
@@ -18,14 +25,17 @@ class _PostWidgetState extends State<PostWidget> {
   void initState() {
     super.initState();
     _isLiked = widget.post.liked;
+    _likeCount = _isLiked ? 1 : 0; // or use your real count if available
   }
 
-  void _toggleLike() {
+  Future<void> _toggleLike() async {
     setState(() {
       _isLiked = !_isLiked;
       _likeCount += _isLiked ? 1 : -1;
       widget.post.liked = _isLiked;
     });
+
+    await widget.onLikeToggle(widget.post);
   }
 
   void _showRecipeDialog(BuildContext context) {

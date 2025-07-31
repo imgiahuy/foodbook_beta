@@ -102,4 +102,13 @@ class FirebaseAuthDatasource {
       'avatar': avatarUrl,
     });
   }
+
+  Future<void> updateUsername(String newUsername) async {
+    final fb.User? fbUser = _auth.currentUser;
+    if (fbUser == null) throw Exception("No logged-in user");
+
+    await _firestore.collection('users').doc(fbUser.uid).update({
+      'username': newUsername,
+    });
+  }
 }

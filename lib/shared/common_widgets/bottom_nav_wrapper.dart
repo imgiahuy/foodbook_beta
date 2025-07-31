@@ -18,7 +18,7 @@ class BottomNavWrapper extends StatelessWidget {
       if (location.startsWith('/swipe')) return 0;
       if (location.startsWith('/surfen')) return 1;
       if (location.startsWith('/add')) return 2;
-      if (location.startsWith('/like')) return 3;
+      if (location.startsWith('/book')) return 3;
       if (location.startsWith('/profile')) return 4;
       return 0; // default to swipe
     }
