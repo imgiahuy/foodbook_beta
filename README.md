@@ -1,48 +1,45 @@
-foodbook_beta
-Kudos to the Developer!
+This is a graded project for the Mobile Application course at HTWG Konstanz, Summer Semester 2025.
+The project was created by Phat Gia Huy Nguyen.
+Feel free to use it for educational purposes.
 
-This app was created and developed as part of the Mobile Anwendungen course at HTWG Konstanz during the Summer Semester 2025.
+Disclaimer
+This is a solo project, so it may not be perfect. However, I believe it is a complete and well-rounded project that covers all stages of the development process from start to finish.
+I wish I had more time to further refine it, but I am proud of what I have accomplished.
 
-⚠️ Disclaimer
-This app is still in development and not yet fully functional. Several features are still missing or under construction. The project is part of a study course and is freely available for educational purposes. Thank you for your understanding and support!
+How to Run the Project
+To use and test the application, please follow these steps:
 
-🍽️ About the App
-foodbook_beta is a social network or dating-style app—but for food!
-Inspired by popular apps like Instagram and Tinder, foodbook blends the best features from these platforms to create a unique, food-focused social experience.
-Idea was trigger the curiosity of people from younger generation : Z, ...
+Install Android Studio to emulate virtual devices on your computer.
 
-✅ Current Features
-Swipe Feature – Swipe through food posts like in Tinder
+This is an Android application, so Android Studio is recommended for the best experience.
 
-Post Feature – Share your food moments
+It can also run on Microsoft platforms (e.g., Visual Studio), but Android Studio is ideal.
 
-Saved Feature – Bookmark your favorite dishes
+The app was carefully designed for Google Pixel 9 Pro, though I also worked to make it responsive for all screen sizes.
 
-Liked Feature – Like others’ food posts
+Best viewed on Pixel 9 Pro.
 
-🚧 Roadmap / Upcoming Updates
-🌟 Beautiful UI improvements
+Install Flutter by following the official installation instructions from the Flutter website.
 
-⚙️ Performance optimization
+Clone the repository and open it with VS Code or any preferred IDE.
 
-🔐 Authentication Enhancements:
+Run the following command:
+flutter run
+Then choose the device or channel you want to use.
 
-Reset password
+Features and Backend
+The project follows a feature-first structure and uses Firebase and Cloudinary as backend services (Cloudinary is used for image storage).
 
-Change username/email
+Implemented features include:
 
-Stay logged in
+User Authentication
 
-🗄️ Backend & Database integration
+Post management (save, load, and delete dynamically)
 
-...and more!
+Swipe functionality
 
-💻 Tech Stack
-Language: Dart
+Book Page: displays and stores the user's posts
 
-Framework: Flutter
-
-The entire app is developed using Flutter with Dart.
-
-
-
+Note
+Some minor features could not be implemented due to time constraints. However, the core features and the main concept of the application are fully functional and usable.
+Tests have been written, but they are not fully comprehensive and can be improved.
