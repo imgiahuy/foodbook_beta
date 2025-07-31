@@ -2,13 +2,12 @@ import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:image_picker/image_picker.dart'; // Add this dependency
+import 'package:image_picker/image_picker.dart'; 
 import 'package:foodbook_beta/features/auth/presentation/controller/register_controller.dart';
 import 'package:foodbook_beta/shared/design_system/app_const.dart';
 import 'package:foodbook_beta/shared/design_system/text_theme.dart';
 import 'package:foodbook_beta/shared/design_system/colors_digital.dart';
 import 'package:foodbook_beta/features/auth/presentation/feature_assets/custom_text.dart';
-import 'package:foodbook_beta/features/auth/presentation/feature_assets/image_path.dart';
 import 'package:go_router/go_router.dart';
 
 class RegisterPages extends ConsumerStatefulWidget {

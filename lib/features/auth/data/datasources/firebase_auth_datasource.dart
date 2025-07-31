@@ -2,15 +2,21 @@ import 'dart:io';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart' as fb;
-import 'package:foodbook_beta/features/posten/data/datasource/cloudinary_service.dart';
+import 'package:foodbook_beta/shared/services/cloudinary_service.dart';
 import '../dtos/user_model.dart';
 
 class FirebaseAuthDatasource {
-  final fb.FirebaseAuth _auth = fb.FirebaseAuth.instance;
-  final FirebaseFirestore _firestore = FirebaseFirestore.instance;
+  final fb.FirebaseAuth _auth;
+  final FirebaseFirestore _firestore;
   final CloudinaryService cloudinaryService;
 
-  FirebaseAuthDatasource(this.cloudinaryService);
+    FirebaseAuthDatasource(
+    this.cloudinaryService, {
+    fb.FirebaseAuth? auth,
+    FirebaseFirestore? firestore,
+  })  : _auth = auth ?? fb.FirebaseAuth.instance,
+        _firestore = firestore ?? FirebaseFirestore.instance;
+
 
   UserModel? _mapFirebaseUserWithProfile(
     fb.User fbUser,
@@ -57,7 +63,7 @@ class FirebaseAuthDatasource {
     String email,
     String password,
     String username,
-    File? avatarFile, // add avatarFile parameter
+    File? avatarFile, 
   ) async {
     final result = await _auth.createUserWithEmailAndPassword(
       email: email,
@@ -67,16 +73,14 @@ class FirebaseAuthDatasource {
     if (fbUser != null) {
       String? avatarUrl;
 
-      // If avatarFile is provided, upload it and get URL
       if (avatarFile != null) {
         avatarUrl = await cloudinaryService.uploadImage(avatarFile);
       }
 
-      // Save user info + avatar URL to Firestore
       await _firestore.collection('users').doc(fbUser.uid).set({
         'username': username,
         'email': email,
-        if (avatarUrl != null) 'avatar': avatarUrl, // only add if exists
+        if (avatarUrl != null) 'avatar': avatarUrl,
       });
 
       return UserModel.fromFirebaseUser(

@@ -13,14 +13,13 @@ class BookPage extends ConsumerStatefulWidget {
 
 class _BookPageState extends ConsumerState<BookPage> with SingleTickerProviderStateMixin {
   late TabController _tabController;
-  String? currentUsername; // Speichert den Username
+  String? currentUsername;
 
   @override
   void initState() {
     super.initState();
-    _tabController = TabController(length: 2, vsync: this);
+    _tabController = TabController(length: 1, vsync: this);
 
-    // Username laden und Posts laden
     Future.microtask(() async {
       final username = await ref.read(postControllerProvider).getCurrentUsername();
       setState(() {
@@ -49,9 +48,8 @@ class _BookPageState extends ConsumerState<BookPage> with SingleTickerProviderSt
       );
     }
 
-    // Eigene Posts und gelikete Posts filtern
+    // Nur eigene Posts filtern
     final yourPosts = posts.where((post) => post.username == currentUsername).toList();
-    final likedPosts = posts.where((post) => post.liked).toList();
 
     Widget buildGrid(List<PostContent> posts) {
       if (posts.isEmpty) {
@@ -95,7 +93,6 @@ class _BookPageState extends ConsumerState<BookPage> with SingleTickerProviderSt
           controller: _tabController,
           tabs: const [
             Tab(text: 'Your Posts'),
-            Tab(text: 'Liked Posts'),
           ],
         ),
       ),
@@ -103,7 +100,6 @@ class _BookPageState extends ConsumerState<BookPage> with SingleTickerProviderSt
         controller: _tabController,
         children: [
           buildGrid(yourPosts),
-          buildGrid(likedPosts),
         ],
       ),
       bottomNavigationBar: BottomNavBar(currentIndex: 3),

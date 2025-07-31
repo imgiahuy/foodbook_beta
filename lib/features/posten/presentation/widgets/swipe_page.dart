@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:foodbook_beta/features/posten/domain/model/post.dart';
 import 'package:foodbook_beta/features/posten/presentation/state/post_controller_provider.dart';
 import 'package:foodbook_beta/features/posten/presentation/widgets/post_editor_page.dart';
 import 'package:foodbook_beta/shared/common_widgets/bottom_nav_bar.dart';
@@ -14,7 +13,6 @@ class SwipePage extends ConsumerStatefulWidget {
 }
 
 class _SwipePageState extends ConsumerState<SwipePage> {
-  // Track dismissed posts locally by their postid
   final Set<String> dismissedPostIds = {};
 
   @override
@@ -26,7 +24,7 @@ class _SwipePageState extends ConsumerState<SwipePage> {
     final visiblePosts = posts.where((p) => !dismissedPostIds.contains(p.postid)).toList();
 
     return Scaffold(
-      appBar: AppBar(title: const Text("Swipe Cards Demo")),
+      appBar: AppBar(title: const Text("Foodbook")),
       bottomNavigationBar: const BottomNavBar(currentIndex: 0),
       body: Center(
         child: Stack(

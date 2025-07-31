@@ -12,10 +12,8 @@ class PostRepositoryImpl extends PostRepository {
   PostRepositoryImpl({
     FirestoreDataSource? dataSource,
     HiveLocalDataSource? localDataSource,
-  })  : _dataSource = dataSource ?? FirestoreDataSource(),
-        _localDataSource = localDataSource ?? HiveLocalDataSource();
-
-  /// ----------- REMOTE ----------
+  }) : _dataSource = dataSource ?? FirestoreDataSource(),
+       _localDataSource = localDataSource ?? HiveLocalDataSource();
   @override
   Future<void> saveRemote(PostContent post, {File? imageFile}) async {
     final dto = PostContentDto.fromDomain(post);
@@ -38,7 +36,6 @@ class PostRepositoryImpl extends PostRepository {
     return allDtos.map((dto) => dto.toDomain()).toList();
   }
 
-  /// ----------- LOCAL ----------
   @override
   Future<void> saveLocal(PostContent post) async {
     await _localDataSource.save(post);
@@ -52,5 +49,10 @@ class PostRepositoryImpl extends PostRepository {
   @override
   Future<void> deleteLocal(String postid) async {
     await _localDataSource.delete(postid);
+  }
+
+  @override
+  Future<List<PostContent>> loadAllLocal() async {
+    return await _localDataSource.loadAll();
   }
 }

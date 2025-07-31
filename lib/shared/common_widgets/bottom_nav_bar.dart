@@ -31,7 +31,7 @@ class _BottomNavBarState extends State<BottomNavBar> {
             context.go('/surfen/add');
             break;
           case 3:
-            context.go('surfen/book');
+            context.go('/surfen/book');
             break;
           case 4:
             context.go('/surfen/profile');

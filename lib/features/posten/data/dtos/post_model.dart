@@ -2,9 +2,9 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:hive/hive.dart';
 import 'package:foodbook_beta/features/posten/domain/model/post.dart';
 
-part 'post_content_dto.g.dart'; // Hive generator
+part 'post_model.g.dart';
 
-@HiveType(typeId: 0) // Assign a unique typeId
+@HiveType(typeId: 0) 
 class PostContentDto {
   @HiveField(0)
   final String? username;
@@ -33,7 +33,6 @@ class PostContentDto {
     this.liked = false,
   });
 
-  /// From Firestore
   factory PostContentDto.fromFirestore(DocumentSnapshot doc) {
     final data = doc.data() as Map<String, dynamic>;
     return PostContentDto(
@@ -46,7 +45,6 @@ class PostContentDto {
     );
   }
 
-  /// To Firestore
   Map<String, dynamic> toFirestore() {
     return {
       'username': username,
@@ -58,7 +56,6 @@ class PostContentDto {
     };
   }
 
-  /// DTO -> Domain
   PostContent toDomain() {
     return PostContent(
       username: username,
@@ -70,7 +67,6 @@ class PostContentDto {
     );
   }
 
-  /// Domain -> DTO
   factory PostContentDto.fromDomain(PostContent post) {
     return PostContentDto(
       username: post.username,

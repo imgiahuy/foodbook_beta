@@ -12,7 +12,7 @@ class SignUpUsecase {
     String email,
     String password,
     String username,
-    [File? avatarFile]  // Add this optional param
+    [File? avatarFile]
   ) {
     return repository.signUp(email, password, username, avatarFile);
   }

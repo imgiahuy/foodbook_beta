@@ -11,7 +11,7 @@ class AuthRepoFirebaseImpl extends AuthRepository {
 
   @override
   Future<User?> getCurrentUser() async {
-    final userModel = await datasource.currentUser; // now async
+    final userModel = await datasource.currentUser;
     return userModel?.toEntity();
   }
 

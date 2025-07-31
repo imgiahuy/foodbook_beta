@@ -25,9 +25,12 @@ class SurfenPage extends ConsumerWidget {
                 final post = postController.posts[index];
                 return Padding(
                   padding: const EdgeInsets.symmetric(vertical: 8),
-                  child: PostWidget(post: post, onLikeToggle: (post) async {
-                    await postController.toggleLike(post);
-                  },),
+                  child: PostWidget(
+                    post: post,
+                    onLikeToggle: (post) async {
+                      await postController.toggleLike(post);
+                    },
+                  ),
                 );
               },
             ),

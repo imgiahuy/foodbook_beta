@@ -3,7 +3,7 @@ import 'package:foodbook_beta/features/posten/domain/model/post.dart';
 
 typedef LikeToggleCallback = Future<void> Function(PostContent post);
 
-class PostWidget extends StatefulWidget {
+class PostWidget extends StatelessWidget {
   final PostContent post;
   final LikeToggleCallback onLikeToggle;
 
@@ -13,33 +13,8 @@ class PostWidget extends StatefulWidget {
     required this.onLikeToggle,
   }) : super(key: key);
 
-  @override
-  State<PostWidget> createState() => _PostWidgetState();
-}
-
-class _PostWidgetState extends State<PostWidget> {
-  late bool _isLiked;
-  int _likeCount = 0;
-
-  @override
-  void initState() {
-    super.initState();
-    _isLiked = widget.post.liked;
-    _likeCount = _isLiked ? 1 : 0; // or use your real count if available
-  }
-
-  Future<void> _toggleLike() async {
-    setState(() {
-      _isLiked = !_isLiked;
-      _likeCount += _isLiked ? 1 : -1;
-      widget.post.liked = _isLiked;
-    });
-
-    await widget.onLikeToggle(widget.post);
-  }
-
   void _showRecipeDialog(BuildContext context) {
-    if (widget.post.recipe == null || widget.post.recipe!.isEmpty) return;
+    if (post.recipe == null || post.recipe!.isEmpty) return;
 
     showDialog(
       context: context,
@@ -56,7 +31,7 @@ class _PostWidgetState extends State<PostWidget> {
                 style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
               ),
               const SizedBox(height: 10),
-              SingleChildScrollView(child: Text(widget.post.recipe ?? '')),
+              SingleChildScrollView(child: Text(post.recipe ?? '')),
               const SizedBox(height: 10),
               TextButton(
                 onPressed: () => Navigator.of(dialogContext).pop(),
@@ -71,8 +46,6 @@ class _PostWidgetState extends State<PostWidget> {
 
   @override
   Widget build(BuildContext context) {
-    final post = widget.post;
-
     return ConstrainedBox(
       constraints: const BoxConstraints(maxWidth: 700),
       child: Container(
@@ -83,7 +56,6 @@ class _PostWidgetState extends State<PostWidget> {
         ),
         child: Stack(
           children: [
-            // Background Post Image
             ClipRRect(
               borderRadius: BorderRadius.circular(30),
               child: post.image != null
@@ -92,7 +64,8 @@ class _PostWidgetState extends State<PostWidget> {
                       width: double.infinity,
                       height: double.infinity,
                       fit: BoxFit.cover,
-                      errorBuilder: (context, error, stackTrace) => Container(
+                      errorBuilder: (context, error, stackTrace) =>
+                          Container(
                         color: Colors.grey.shade200,
                         child: const Icon(
                           Icons.broken_image,
@@ -115,7 +88,6 @@ class _PostWidgetState extends State<PostWidget> {
                     ),
             ),
 
-            // Username & Avatar
             Positioned(
               top: 10,
               left: 10,
@@ -148,23 +120,22 @@ class _PostWidgetState extends State<PostWidget> {
               ),
             ),
 
-            // Like & Recipe Buttons
             Positioned(
               bottom: 15,
               left: 20,
               child: Row(
                 children: [
                   GestureDetector(
-                    onTap: _toggleLike,
+                    onTap: () => onLikeToggle(post),
                     child: Icon(
-                      _isLiked ? Icons.favorite : Icons.favorite_border,
+                      post.liked ? Icons.favorite : Icons.favorite_border,
                       size: 30,
-                      color: _isLiked ? Colors.orange : Colors.white,
+                      color: post.liked ? Colors.red : Colors.white,
                     ),
                   ),
                   const SizedBox(width: 8),
                   Text(
-                    "$_likeCount",
+                    "${post.likeCount}",
                     style: const TextStyle(
                       color: Colors.white,
                       fontWeight: FontWeight.bold,

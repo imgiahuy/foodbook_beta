@@ -2,6 +2,7 @@
 import 'package:foodbook_beta/features/auth/presentation/widgets/login_pages.dart';
 import 'package:foodbook_beta/features/auth/presentation/widgets/profile_pages.dart';
 import 'package:foodbook_beta/features/auth/presentation/widgets/register_pages.dart';
+import 'package:foodbook_beta/features/posten/presentation/widgets/book_pages.dart';
 import 'package:foodbook_beta/features/posten/presentation/widgets/post_editor_page.dart';
 import 'package:foodbook_beta/features/posten/presentation/widgets/surfen_page.dart';
 import 'package:foodbook_beta/features/posten/presentation/widgets/swipe_page.dart';
@@ -11,6 +12,7 @@ import 'package:foodbook_beta/features/auth/presentation/widgets/welcome_pages.d
 
 final GoRouter appRouter = GoRouter(
   routes: [
+    /// Onboarding
     GoRoute(
       path: '/',
       name: 'onboarding',
@@ -35,30 +37,32 @@ final GoRouter appRouter = GoRouter(
         ),
       ],
     ),
+
+    /// Hauptnavigation
     GoRoute(
       path: '/surfen',
       name: 'surfen',
       builder: (context, state) => SurfenPage(),
       routes: [
         GoRoute(
-          path: '/profile',
+          path: 'profile',
           name: 'profile',
           builder: (context, state) => ProfilePages(),
         ),
         GoRoute(
-          path: '/swipe',
+          path: 'swipe',
           name: 'swipe',
           builder: (context, state) => SwipePage(),
         ),
         GoRoute(
-          path: '/add',
+          path: 'add',
           name: 'add',
           builder: (context, state) => PostEditor(),
         ),
         GoRoute(
-          path: '/book',
+          path: 'book',
           name: 'book',
-          builder: (context, state) => PostEditor(),
+          builder: (context, state) => BookPage(),
         ),
       ],
     ),

@@ -58,7 +58,6 @@ class AuthNotifier extends StateNotifier<AsyncValue<User?>> {
     state = const AsyncValue.data(null);
   }
 
-  /// Update Avatar
   Future<void> updateAvatar(File avatarFile) async {
     state = const AsyncValue.loading();
     try {
@@ -70,7 +69,6 @@ class AuthNotifier extends StateNotifier<AsyncValue<User?>> {
     }
   }
 
-    /// Update Avatar
   Future<void> updateUsername(String newUsername) async {
     state = const AsyncValue.loading();
     try {

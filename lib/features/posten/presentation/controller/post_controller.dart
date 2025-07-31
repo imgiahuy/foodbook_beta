@@ -43,6 +43,7 @@ class PostController extends ChangeNotifier {
     posts.addAll(allPosts);
     notifyListeners();
   }
+  
 
   Future<PostContent> postContent() async {
     final user = await _authRepository.getCurrentUser();
@@ -56,6 +57,7 @@ class PostController extends ChangeNotifier {
       avatarUrl: user.avatar,
       recipe: recipe,
       liked: false,
+      likeCount: 0,
     );
 
     await _postRepository.saveRemote(newPost, imageFile: image);
@@ -67,29 +69,28 @@ class PostController extends ChangeNotifier {
   }
 
   Future<void> toggleLike(PostContent post) async {
-    // Toggle liked state
-    final updatedPost = PostContent(
-      username: post.username,
-      postid: post.postid,
-      image: post.image,
-      recipe: post.recipe,
-      avatarUrl: post.avatarUrl,
-      liked: !post.liked,
-    );
-
-    if (updatedPost.liked) {
-      // Save locally when liked
-      await _postRepository.saveLocal(updatedPost);
-    } else {
-      // Delete locally when unliked
-      await _postRepository.deleteLocal(updatedPost.postid!);
-    }
-
-    // Update in list and notify UI
     final index = posts.indexWhere((p) => p.postid == post.postid);
     if (index != -1) {
+      final currentPost = posts[index];
+      final bool newLiked = !currentPost.liked;
+      final int newLikeCount = newLiked
+          ? currentPost.likeCount + 1
+          : (currentPost.likeCount > 0 ? currentPost.likeCount - 1 : 0);
+
+      final updatedPost = currentPost.copyWith(
+        liked: newLiked,
+        likeCount: newLikeCount,
+      );
+
       posts[index] = updatedPost;
       notifyListeners();
+
+      // Save or delete locally depending on liked state
+      if (newLiked) {
+        await _postRepository.saveLocal(updatedPost);
+      } else {
+        await _postRepository.deleteLocal(updatedPost.postid!);
+      }
     }
   }
 
