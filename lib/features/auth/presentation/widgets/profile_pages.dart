@@ -1,15 +1,12 @@
-import 'dart:io';
-
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:foodbook_beta/features/auth/presentation/controller/profile_controller.dart';
+import 'package:foodbook_beta/shared/common_widgets/bottom_nav_bar.dart';
 import 'package:foodbook_beta/shared/design_system/app_const.dart';
 import 'package:foodbook_beta/shared/design_system/text_theme.dart';
 import 'package:foodbook_beta/shared/design_system/colors_digital.dart';
 import 'package:foodbook_beta/features/auth/presentation/widgets/avatar.dart';
 import 'package:go_router/go_router.dart';
-import 'package:image_picker/image_picker.dart';
-import 'package:foodbook_beta/features/auth/presentation/states/avatar_notifier.dart';
 
 class ProfilePages extends ConsumerWidget {
   const ProfilePages({super.key});
@@ -17,12 +14,13 @@ class ProfilePages extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final controller = ProfileController(ref);
-
     final user = controller.readAuthState();
 
     final screenWidth = MediaQuery.of(context).size.width;
     final screenHeight = MediaQuery.of(context).size.height;
+
     return Scaffold(
+      bottomNavigationBar: BottomNavBar(currentIndex: 4),
       body: Stack(
         children: [
           Column(
@@ -80,35 +78,66 @@ class ProfilePages extends ConsumerWidget {
                     child: Column(
                       children: [
                         Avatar(
+                          imageUrl: user?.avatar,
                           onTap: () async {
-                            final picker = ImagePicker();
-                            final pickedFile = await picker.pickImage(
-                              source: ImageSource.gallery,
-                            );
-                            if (pickedFile != null) {
-                              final file = File(pickedFile.path);
-                              ref.read(avatarFileProvider.notifier).state =
-                                  file;
-                            }
+                            await controller.pickAndUploadAvatar(context);
                           },
                         ),
                         SizedBox(
-                          height: 50, // fixed height
+                          height: 50,
                           child: Center(
                             child: Text(
                               user != null ? (user.username ?? 'User') : 'User',
                               style: AppTextTheme.textTheme.labelLarge,
                               maxLines: 1,
-                              overflow:
-                                  TextOverflow.ellipsis, // Prevent overflow
+                              overflow: TextOverflow.ellipsis,
                               textAlign: TextAlign.center,
                             ),
                           ),
                         ),
                         SizedBox(
                           child: TextButton(
-                            onPressed: () {},
-                            child: Text('Edit'),
+                            onPressed: () {
+                              final TextEditingController usernameController =
+                                  TextEditingController(
+                                text: user?.username ?? '',
+                              );
+
+                              showDialog(
+                                context: context,
+                                builder: (context) {
+                                  return AlertDialog(
+                                    title: const Text('Edit Username'),
+                                    content: TextField(
+                                      controller: usernameController,
+                                      decoration: const InputDecoration(
+                                        hintText: 'Enter new username',
+                                      ),
+                                    ),
+                                    actions: [
+                                      TextButton(
+                                        onPressed: () =>
+                                            Navigator.pop(context),
+                                        child: const Text('Cancel'),
+                                      ),
+                                      TextButton(
+                                        onPressed: () async {
+                                          final newUsername =
+                                              usernameController.text.trim();
+                                          if (newUsername.isNotEmpty) {
+                                            await controller.updateUsername(
+                                                context, newUsername);
+                                          }
+                                          Navigator.pop(context);
+                                        },
+                                        child: const Text('Save'),
+                                      ),
+                                    ],
+                                  );
+                                },
+                              );
+                            },
+                            child: const Text('Edit'),
                           ),
                         ),
                       ],
@@ -128,7 +157,7 @@ class ProfilePages extends ConsumerWidget {
                             onPressed: () {
                               context.goNamed('save');
                             },
-                            child: Row(
+                            child: const Row(
                               children: [
                                 Expanded(child: Text('Saved')),
                                 Icon(Icons.chevron_right_outlined),
@@ -141,7 +170,7 @@ class ProfilePages extends ConsumerWidget {
                           width: AppSizes.buttonWidthLarge,
                           child: ElevatedButton(
                             onPressed: () {},
-                            child: Row(
+                            child: const Row(
                               children: [
                                 Expanded(child: Text('Setting')),
                                 Icon(Icons.chevron_right_outlined),
@@ -154,7 +183,7 @@ class ProfilePages extends ConsumerWidget {
                           width: AppSizes.buttonWidthLarge,
                           child: ElevatedButton(
                             onPressed: () {},
-                            child: Row(
+                            child: const Row(
                               children: [
                                 Expanded(child: Text('History')),
                                 Icon(Icons.chevron_right_outlined),
@@ -167,7 +196,7 @@ class ProfilePages extends ConsumerWidget {
                           width: AppSizes.buttonWidthLarge,
                           child: ElevatedButton(
                             onPressed: () {},
-                            child: Row(
+                            child: const Row(
                               children: [
                                 Expanded(child: Text('Help')),
                                 Icon(Icons.chevron_right_outlined),
@@ -186,7 +215,7 @@ class ProfilePages extends ConsumerWidget {
                             onPressed: () {
                               controller.signOut(context);
                             },
-                            child: Row(
+                            child: const Row(
                               children: [
                                 Expanded(child: Text('Sign out')),
                                 Icon(Icons.chevron_right_outlined),

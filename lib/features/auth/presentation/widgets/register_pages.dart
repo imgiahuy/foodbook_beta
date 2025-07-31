@@ -1,22 +1,41 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:image_picker/image_picker.dart'; 
 import 'package:foodbook_beta/features/auth/presentation/controller/register_controller.dart';
 import 'package:foodbook_beta/shared/design_system/app_const.dart';
 import 'package:foodbook_beta/shared/design_system/text_theme.dart';
 import 'package:foodbook_beta/shared/design_system/colors_digital.dart';
 import 'package:foodbook_beta/features/auth/presentation/feature_assets/custom_text.dart';
-import 'package:foodbook_beta/features/auth/presentation/feature_assets/image_path.dart';
 import 'package:go_router/go_router.dart';
 
-class RegisterPages extends ConsumerWidget {
+class RegisterPages extends ConsumerStatefulWidget {
   RegisterPages({super.key});
 
+  @override
+  ConsumerState<RegisterPages> createState() => _RegisterPagesState();
+}
+
+class _RegisterPagesState extends ConsumerState<RegisterPages> {
   final emailController = TextEditingController();
-  final passwordCotroller = TextEditingController();
+  final passwordController = TextEditingController();
   final usernameController = TextEditingController();
 
+  File? _avatarFile;
+
+  Future<void> _pickAvatarImage() async {
+    final picker = ImagePicker();
+    final pickedFile = await picker.pickImage(source: ImageSource.gallery);
+    if (pickedFile != null) {
+      setState(() {
+        _avatarFile = File(pickedFile.path);
+      });
+    }
+  }
+
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
+  Widget build(BuildContext context) {
     final controller = RegisterController(ref);
     final authState = controller.watchAuthState();
     final isChecked = controller.watchTerm();
@@ -24,6 +43,7 @@ class RegisterPages extends ConsumerWidget {
     controller.listenRegisterState(context);
 
     final screenWidth = MediaQuery.of(context).size.width;
+
     return Scaffold(
       backgroundColor: white,
       appBar: AppBar(
@@ -67,7 +87,7 @@ class RegisterPages extends ConsumerWidget {
                   style: AppTextTheme.textTheme.headlineLarge,
                 ),
                 Padding(
-                  padding: EdgeInsetsGeometry.all(AppSizes.smallSpacing),
+                  padding: EdgeInsets.all(AppSizes.smallSpacing),
                   child: Text(
                     CustomText.decorText1,
                     style: AppTextTheme.textTheme.bodyMedium,
@@ -86,17 +106,25 @@ class RegisterPages extends ConsumerWidget {
               child: Column(
                 children: [
                   SizedBox(height: AppSizes.spacing),
-                  Container(
-                    decoration: BoxDecoration(
-                      shape: BoxShape.circle,
-                      color: yellow,
-                    ),
-                    height: AppSizes.circleLogoSize,
-                    width: double.infinity,
-                    child: Center(
-                      child: Image.asset(ImagePath.logo, fit: BoxFit.contain),
+
+                  GestureDetector(
+                    onTap: () => _pickAvatarImage(),
+                    child: CircleAvatar(
+                      radius: 50, // or use AppSizes.circleLogoSize/2
+                      backgroundColor: yellow,
+                      backgroundImage: _avatarFile != null
+                          ? FileImage(_avatarFile!)
+                          : null,
+                      child: _avatarFile == null
+                          ? Icon(
+                              Icons.add_a_photo,
+                              size: 40,
+                              color: Colors.grey[700],
+                            )
+                          : null,
                     ),
                   ),
+
                   SizedBox(height: AppSizes.mediumSpacing),
                   SizedBox(
                     height: screenWidth * 1.1,
@@ -125,7 +153,7 @@ class RegisterPages extends ConsumerWidget {
                         SizedBox(
                           width: AppSizes.textFormFieldSize,
                           child: TextFormField(
-                            controller: passwordCotroller,
+                            controller: passwordController,
                             obscureText: true,
                             decoration: InputDecoration(
                               filled: true,
@@ -198,7 +226,7 @@ class RegisterPages extends ConsumerWidget {
                             ),
                             onPressed: () {
                               final email = emailController.text.trim();
-                              final password = passwordCotroller.text.trim();
+                              final password = passwordController.text.trim();
                               final username = usernameController.text.trim();
                               controller.signUp(
                                 email,
@@ -206,6 +234,7 @@ class RegisterPages extends ConsumerWidget {
                                 username,
                                 isChecked,
                                 authState,
+                                _avatarFile, // pass the avatar file here
                               );
                             },
                             child: controller.authStateLoadingCheck(authState),

@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:foodbook_beta/features/auth/domain/models/user.dart';
@@ -33,9 +35,12 @@ class RegisterController {
     String username,
     bool isChecked,
     AsyncValue<User?> authState,
+    File? avatarFile,
   ) {
     if (isChecked && !authState.isLoading) {
-      ref.read(authNotifierProvider.notifier).signUp(email, password, username);
+      ref
+          .read(authNotifierProvider.notifier)
+          .signUp(email, password, username, avatarFile);
     }
   }
 

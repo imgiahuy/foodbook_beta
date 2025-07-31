@@ -16,7 +16,6 @@ class WelcomePages extends StatefulWidget {
 }
 
 class _WelcomePagesState extends State<WelcomePages> {
-  //timer set
   int _currentIndex = 0;
   Timer? _timer;
 
@@ -54,7 +53,6 @@ class _WelcomePagesState extends State<WelcomePages> {
             left: 0,
             bottom: 0,
             child: SizedBox(
-              //height : 200 //might effect the column.
               width: double.infinity,
               child: Column(
                 children: [
@@ -94,7 +92,6 @@ class _WelcomePagesState extends State<WelcomePages> {
               ),
               child: Column(
                 children: [
-                  //easter egg when scroll up ???
                   Padding(
                     padding: const EdgeInsets.all(AppSizes.sectionPadding),
                     child: Column(
