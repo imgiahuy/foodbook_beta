@@ -24,10 +24,13 @@ Install Flutter by following the official installation instructions from the Flu
 Clone the repository and open it with VS Code or any preferred IDE.
 
 Run the following command:
-flutter run
+
+<flutter run>
+  
 Then choose the device or channel you want to use.
 
 Features and Backend
+
 The project follows a feature-first structure and uses Firebase and Cloudinary as backend services (Cloudinary is used for image storage).
 So Posts can be save remotely and not just locally. Once user open the app, Posts will be loaded and fill the HomePage and SwipePage for user to surf or swipe.
 Once there are any changes remotely or in cloud, the app is able to dynamically update and rebuild itself.
