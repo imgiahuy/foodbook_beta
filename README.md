@@ -25,7 +25,7 @@ Clone the repository and open it with VS Code or any preferred IDE.
 
 Run the following command:
 
-<flutter run>
+"flutter run"
   
 Then choose the device or channel you want to use.
 
